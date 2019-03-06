@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <title>Brewery List</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+        <script src="ignore_lists/ignore_list.js"></script>
+        <script src="ignore_lists/ignore_list_CA.js"></script>
+        <script src="ignore_lists/ignore_list_CO.js"></script>
+        <script src="ignore_lists/ignore_list_IA.js"></script>
+        <script src="ignore_lists/ignore_list_IL.js"></script>
+        <script src="ignore_lists/ignore_list_IN.js"></script>
+        <script src="ignore_lists/ignore_list_MI.js"></script>
+        <script src="ignore_lists/ignore_list_MN.js"></script>
+        <script src="ignore_lists/ignore_list_MO.js"></script>
+        <script src="ignore_lists/ignore_list_NC.js"></script>
+        <script src="ignore_lists/ignore_list_NE.js"></script>
+        <script src="ignore_lists/ignore_list_WA.js"></script>
+        <script src="ignore_lists/ignore_list_WI.js"></script>
+
+        <script src="local_api_keys.js"></script>
+        <script src="script.js"></script>
+        <style>
+            /* Optional: Makes the sample page fill the window. */
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            .progressbar {
+                /* position: absolute; */
+                /* top: 0; */
+                width: 100%;
+                height: 50px;
+                background-color: #fff;
+                opacity: 0.7;
+                /* z-index: 1; */
+            }
+            .stateTitle, #loading {
+                /* position: absolute; */
+                /* top: 0; */
+                width: 100%;
+                height: 50px;
+                background-color: #fff;
+                /* opacity: 0.7; */
+                /* z-index: 1; */
+                vertical-align: bottom;
+                display: table-cell;
+                font-size: 18px;
+                font-weight: bold;
+                cursor: pointer;
+                padding-left: 10px;
+            }
+            .brewery {
+                left: 10px;
+                font-size: 14px;
+                display: list-item;
+                list-style-type: disc;
+                list-style-position: inside;
+                margin-left: 10px;
+            }
+            .breweryList {
+                display: none;
+            }
+            #info {
+                display: none;
+                font-size: 16px;
+                top: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="loading">Page is loading - just wait</div>
+        <div id="info">
+            <center>
+                Info is pulled from the <a href="https://www.brewersassociation.org/directories/breweries/">Brewers Association</a>
+                <br />Contract and Planning brewery types are excluded as they can not be visited
+                <br />Click the state to view visited breweries
+            </center>
+        </div>
+        <div id="list"></div>
+    </body>
+</html>
