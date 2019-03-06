@@ -162,7 +162,7 @@ function getStateBreweries(state, stateVisitedTotal, fullBreweryArray, inBusines
                     if (!baIgnoreList[STATE_ABBREVIATION[state]].includes($("ul.brewery-info li.name", element).text())) {
                         breweryCount++
                     } else {
-                        // Remove from list once it is ignored
+                        // Remove from list once it is ignored - there are some duplicates that use the exact same name. Example WI - Good City Brewing Company
                         baIgnoreList[STATE_ABBREVIATION[state]].splice(baIgnoreList[STATE_ABBREVIATION[state]].indexOf($("ul.brewery-info li.name", element).text()), 1)
                     }
                 }
