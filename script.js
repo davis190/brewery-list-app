@@ -156,9 +156,11 @@ function getStateBreweries(state, stateVisitedTotal, fullBreweryArray, inBusines
 
         var breweryCount = 0
         $.each( breweryReturn, function( i, element ) {
-            // Remove contract brewers - Can't visit them
+            // Remove contract brewers and breweries in planning - Can't visit them... yet
             if ($("ul.brewery-info li.brewery_type a", element).text() != "Contract" && $("ul.brewery-info li.brewery_type a", element).text() != "Planning") {
+                // Ensure that a name exists
                 if ($("ul.brewery-info li.name", element).text() != "") {
+                    // If the brewery name is not found in the exception list - increment the count
                     if (!baIgnoreList[STATE_ABBREVIATION[state]].includes($("ul.brewery-info li.name", element).text())) {
                         breweryCount++
                     } else {
@@ -173,12 +175,14 @@ function getStateBreweries(state, stateVisitedTotal, fullBreweryArray, inBusines
 
         var statusbarnum = Math.round((stateVisitedTotal / breweryCount) * 100)
 
+        // Add the state title + empty progress bar
         $( "#list" ).append('<div class="stateTitle" onclick="$(\'#breweryList'+STATE_ABBREVIATION[state]+'\').toggle()">'+state+' '+statusbarnum+'% ('+stateVisitedTotal+'/'+breweryCount+')</div><div class="progressbar" id="progressBar'+STATE_ABBREVIATION[state]+'"></div>')
 
         // Add list of visited breweries
         var breweryList = ""
         $.each(fullBreweryArray, function( index, brewery) {
             var style = ""
+            // If brewery is in the google sheets ignore array - color it red, but still display it
             if (!inBusinessBreweryArray.includes(brewery)) {
                 style='style="color:red"'
             }
@@ -186,6 +190,7 @@ function getStateBreweries(state, stateVisitedTotal, fullBreweryArray, inBusines
         })
         $( "#list" ).append('<div class="breweryList" id="breweryList'+STATE_ABBREVIATION[state]+'">'+breweryList+'</div>')
 
+        // populate progress bar with percentage
         $( "#progressBar"+STATE_ABBREVIATION[state] ).progressbar({value: statusbarnum});
     });
 }
@@ -204,8 +209,9 @@ function getSheetBreweries() {
             var state = placeArray[0].split("(")[0].trim();
             // console.log("state - "+state)
             for (var r = 1, place; place = placeArray[r]; r++) {
-                // console.log(place+" "+state)
+                // fullBreweryArray - is the array of all of the breweries
                 fullBreweryArray.push(place)
+                // Create inBusinessBreweryArray - for only breweries not in the ignore list - this is for the count
                 if (!gsIgnoreList[STATE_ABBREVIATION[state]].includes(place)) {
                     inBusinessBreweryArray.push(place)
                 }
