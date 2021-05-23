@@ -36,7 +36,7 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName: !Join [".", [!Ref pS3Bucket, "s3.amazonaws.com"] ]
+          - DomainName: !Join [".", [!Ref rS3Bucket, "s3.amazonaws.com"] ]
             Id: brewery-app
             # CustomOriginConfig:
             #   OriginProtocolPolicy: http-only
