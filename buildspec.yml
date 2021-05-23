@@ -5,6 +5,14 @@ env:
     STACK_NAME: "brewery-app-stack"
 
 phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+      python: 3.7
+    commands:
+      - pip install --user aws-sam-cli
+      - USER_BASE_PATH=$(python -m site --user-base)
+      - export PATH=$PATH:$USER_BASE_PATH/bin
   pre_build:
     commands:
       - chmod +x create-or-update-stack.sh
@@ -12,6 +20,8 @@ phases:
   build:
     commands:
       - BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region us-east-1 --query "Stacks[].Outputs[?OutputKey=='Bucket'].OutputValue" --output text)
+      - sam package --template-file serverless.template.yml --s3-bucket $BUCKET --s3-prefix sam/ --output-template-file packaged-template.yml
+      - sam deploy --template-file packaged-template.yml --stack-name Brewery-API-and-CRON --region us-east-1 --capabilities CAPABILITY_IAM
       - API_KEY=$(aws ssm get-parameter --name /brewery-app/api-key --with-decryption --query "Parameter.Value" --output text)
       - SHEET_ID=$(aws ssm get-parameter --name /brewery-app/sheet-id --with-decryption --query "Parameter.Value" --output text)
       - touch html/local_api_keys.js

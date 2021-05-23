@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: WorkerScan APIs.
+Parameters: 
+    WebUrl: 
+      Type: String
+      Default: "https://breweryapi.workerscan.com"
+    pACMCertificate:
+      Type: String
+      Default: "arn:aws:acm:us-east-1:143237551823:certificate/43ff280b-d83a-4af0-99ba-31695ea4d71b"
+
+# https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Runtime: nodejs12.x
+    Timeout: 60
+  Api:
+    # Auth:
+    #   DefaultAuthorizer: CognitoAuthorizer
+    #   Authorizers:
+    #     CognitoAuthorizer:
+    #       UserPoolArn: !Ref pCognitoUserPool
+    #   AddDefaultAuthorizerToCorsPreflight: False # https://github.com/awslabs/serverless-application-model/issues/717
+    Cors:
+      AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,*'"
+      AllowOrigin: "'*'"
+
+Resources:
+  ## API
+  rApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: api
+      # BinaryMediaTypes:
+      #   - "*/*"
+  ## Domain Name
+  rDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      CertificateArn: !Ref pACMCertificate
+      DomainName: breweryapi.workerscan.com
+  rBasePathMapping:
+    Type: 'AWS::ApiGateway::BasePathMapping'
+    Properties:
+      RestApiId: !Ref rApi
+      DomainName: !Ref rDomainName
+      # BasePath: api
+      ## TODO: Should eventually use this so that only one stage is exposed via the domain
+      # Stage: prod
+  ## Lmabda Layer
+  # rSharedLayerVersion:
+  #   Type: AWS::Serverless::LayerVersion
+  #   Properties:
+  #       LayerName: shared-functions
+  #       Description: Dependencies for WorkerScanAPI
+  #       ContentUri: code/shared/
+  #       CompatibleRuntimes:
+  #         # - nodejs6.10
+  #         # - nodejs8.10
+  #         - nodejs12.x
+  #       LicenseInfo: 'MIT'
+  #       # RetentionPolicy: Retain
+  ###################
+  ## Worker APIs
+  ###################
+  rBreweryApi:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      # Runtime: nodejs8.10
+      CodeUri: ./lambda-api/
+      Description: Function for worker brewery options.
+      # Layers:
+      #   - !Ref rSharedLayerVersion
+      MemorySize: 1028
+      # Policies:
+      #   - S3ReadPolicy:
+      #       BucketName:
+      #         !Ref pWorkerScanFilesBucket
+      #   - S3WritePolicy:
+      #       BucketName:
+      #         !Ref pWorkerScanFilesBucket
+      #   - SESCrudPolicy:
+      #       IdentityName: "*"
+      Events:
+        BreweryByState:
+          Type: Api
+          Properties:
+            Path: '/brewery/state/{state}'
+            Method: get
+            RestApiId: !Ref rApi
+        BreweryByStateCount:
+          Type: Api
+          Properties:
+            Path: '/brewery/state/{state}/count'
+            Method: get
+            RestApiId: !Ref rApi
+  ###################
+  ## CRON
+  ###################
+  rCRONBreweryDynamoPopulation:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      # Runtime: nodejs8.10
+      CodeUri: ./lambda-cron/
+      Description: CRON function used to populate dynamo with brewery information
+      # Layers:
+      #   - !Ref rSharedLayerVersion
+      MemorySize: 1028
+      Events:
+        InvocationLevel:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 6 ? * MON-FRI *)

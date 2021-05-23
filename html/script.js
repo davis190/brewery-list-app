@@ -145,54 +145,43 @@ STATE_ABBREVIATION= {
 function getStateBreweries(state, stateVisitedTotal, fullBreweryArray, inBusinessBreweryArray) {
     console.log(state)
 
-    $.ajax({
-        url: "https://www.brewersassociation.org/wp-admin/admin-ajax.php",
-        async: false,
-        method: "POST",
-        data: "action=get_breweries&_id="+state+"&search_by=statename"
+    console.log("Google Sheet Breweries: "+stateVisitedTotal)
+    console.log("Total Breweries: "+breweryCount)
+
+    var statusbarnum = Math.round((stateVisitedTotal / breweryCount) * 100)
+
+    // Add the state title + empty progress bar
+    $( "#list" ).append('<div class="stateTitle" onclick="$(\'#breweryList'+STATE_ABBREVIATION[state]+'\').toggle()">'+state+' '+statusbarnum+'% ('+stateVisitedTotal+'/'+breweryCount+')</div><div class="progressbar" id="progressBar'+STATE_ABBREVIATION[state]+'"></div>')
+
+    // Add list of visited breweries
+    var breweryList = ""
+    $.each(fullBreweryArray, function( index, brewery) {
+        var style = ""
+        // If brewery is in the google sheets ignore array - color it red, but still display it
+        if (!inBusinessBreweryArray.includes(brewery)) {
+            style='style="color:red"'
+        }
+        breweryList = breweryList + '<div class="brewery" '+style+'>'+brewery+'</div>'
     })
-    .done(function( data ) {
-        var breweryReturn = $.parseHTML(data)
+    $( "#list" ).append('<div class="breweryList" id="breweryList'+STATE_ABBREVIATION[state]+'">'+breweryList+'</div>')
 
-        var breweryCount = 0
-        $.each( breweryReturn, function( i, element ) {
-            // Remove contract brewers and breweries in planning - Can't visit them... yet
-            if ($("ul.brewery-info li.brewery_type a", element).text() != "Contract" && $("ul.brewery-info li.brewery_type a", element).text() != "Planning") {
-                // Ensure that a name exists
-                if ($("ul.brewery-info li.name", element).text() != "") {
-                    // If the brewery name is not found in the exception list - increment the count
-                    if (!baIgnoreList[STATE_ABBREVIATION[state]].includes($("ul.brewery-info li.name", element).text())) {
-                        breweryCount++
-                    } else {
-                        // Remove from list once it is ignored - there are some duplicates that use the exact same name. Example WI - Good City Brewing Company
-                        baIgnoreList[STATE_ABBREVIATION[state]].splice(baIgnoreList[STATE_ABBREVIATION[state]].indexOf($("ul.brewery-info li.name", element).text()), 1)
-                    }
-                }
-            }
-        });
-        console.log("Google Sheet Breweries: "+stateVisitedTotal)
-        console.log("Total Breweries: "+breweryCount)
+    // populate progress bar with percentage
+    $( "#progressBar"+STATE_ABBREVIATION[state] ).progressbar({value: statusbarnum});
+}
 
-        var statusbarnum = Math.round((stateVisitedTotal / breweryCount) * 100)
-
-        // Add the state title + empty progress bar
-        $( "#list" ).append('<div class="stateTitle" onclick="$(\'#breweryList'+STATE_ABBREVIATION[state]+'\').toggle()">'+state+' '+statusbarnum+'% ('+stateVisitedTotal+'/'+breweryCount+')</div><div class="progressbar" id="progressBar'+STATE_ABBREVIATION[state]+'"></div>')
-
-        // Add list of visited breweries
-        var breweryList = ""
+function getBrewersAssociationBreweries() {
+    var random_num = Math.floor(Math.random() * 999999999)
+    $.ajax({
+        url: "https://www.brewersassociation.org/wp-content/themes/ba2019/json-store/breweries/breweries.json?nocache="+random_num
+    })
+    .done(function( data ) { 
+        var brewery_data = JSON.parse(data)
+        console.log(brewery_data)
         $.each(fullBreweryArray, function( index, brewery) {
-            var style = ""
-            // If brewery is in the google sheets ignore array - color it red, but still display it
-            if (!inBusinessBreweryArray.includes(brewery)) {
-                style='style="color:red"'
-            }
-            breweryList = breweryList + '<div class="brewery" '+style+'>'+brewery+'</div>'
-        })
-        $( "#list" ).append('<div class="breweryList" id="breweryList'+STATE_ABBREVIATION[state]+'">'+breweryList+'</div>')
 
-        // populate progress bar with percentage
-        $( "#progressBar"+STATE_ABBREVIATION[state] ).progressbar({value: statusbarnum});
-    });
+        })
+        // getSheetBreweries()
+    })
 }
 
 function getSheetBreweries() {
@@ -225,4 +214,4 @@ function getSheetBreweries() {
     
 }
 
-getSheetBreweries()
+getBrewersAssociationBreweries()
