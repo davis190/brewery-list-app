@@ -129,7 +129,7 @@ Resources:
         - IndexName: state
           KeySchema:
             - AttributeName: state
-              KeyType: S
+              KeyType: HASH
           Projection: 
             NonKeyAttributes: 
               - "Name"
