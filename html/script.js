@@ -199,7 +199,7 @@ function getSheetBreweries() {
     
 
     $.ajax({
-        url: "https://sheets.googleapis.com/v4/spreadsheets/"+SHEET_ID+"/values/Sheet1\!A2:L60?key="+API_KEY+"&majorDimension=COLUMNS"
+        url: "https://sheets.googleapis.com/v4/spreadsheets/"+SHEET_ID+"/values/USA\!A2:L60?key="+API_KEY+"&majorDimension=COLUMNS"
     })
     .done(function( data ) {
         for (var i = 0, placeArray; placeArray = data['values'][i]; i++) {
