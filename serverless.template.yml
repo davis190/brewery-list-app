@@ -130,13 +130,10 @@ Resources:
           KeySchema:
             - AttributeName: state
               KeyType: S
-      Projection: 
-        NonKeyAttributes: 
-          - "Address"
-          - "Lat"
-          - "Long"
-          - "Name"
-        ProjectionType: "INCLUDE"
+          Projection: 
+            NonKeyAttributes: 
+              - "Name"
+            ProjectionType: "INCLUDE"
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
