@@ -1,7 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
-  pS3Bucket:
+  pS3BucketName:
     Type: String
+    Default: clayton-brewery-list-app
   pACMCertArn:
     Type: String
     Default: arn:aws:acm:us-east-1:143237551823:certificate/43ff280b-d83a-4af0-99ba-31695ea4d71b
@@ -29,10 +30,6 @@ Resources:
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: string-value
-  rS3BucketLambdaCode:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Join ["-", [!Ref pS3BucketName,  "lambda-code-us-west-2"] ]
   ## Cloudfront distribution
   rCloudfrontDistribution:
     Type: AWS::CloudFront::Distribution

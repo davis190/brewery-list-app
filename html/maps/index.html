@@ -1,0 +1,177 @@
+<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0">
+        <meta charset="utf-8">
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        
+        <!-- https://developers.google.com/sheets/api/samples/reading -->
+        <!-- https://developers.google.com/maps/documentation/javascript/tutorial -->
+        <!-- https://developers.google.com/maps/documentation/javascript/places#find_place_from_query -->
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZx2ObtBozwyOoFiH5Jx6D0XBJjMnNnqM&callback=initMap&libraries=places" async defer></script>
+
+        <script type="text/javascript" src="local_api_key.js"></script>
+        <style>
+            /* Always set the map height explicitly to define the size of the div
+            * element that contains the map. */
+            #map {
+                height: 100%;
+            }
+            /* Optional: Makes the sample page fill the window. */
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            #progressbar {
+                position: absolute;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #fff;
+                opacity: 0.7;
+                z-index: 1;
+            }
+        </style>
+        <script>
+            var map;
+            var service;
+            var breweryArray = []
+            var breweryTotal;
+
+            // var API_KEY = "API_KEY";
+            // var SHEET_ID = "SHEET_ID";
+
+            // Initialize the google map
+            function initMap() {
+                var mapCenter = new google.maps.LatLng(40.5375761,-95.8688977);
+
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: mapCenter,
+                    zoom: 4
+                });
+
+                getBreweries();
+            }
+
+            function getBreweries() {
+                // Fetch list of breweries from the google sheet
+                $.ajax({
+                    url: "https://sheets.googleapis.com/v4/spreadsheets/"+SHEET_ID+"/values/Sheet1\!A2:L60?key="+API_KEY+"&majorDimension=COLUMNS"
+                })
+                .done(function( data ) {
+                    for (var i = 0, placeArray; placeArray = data['values'][i]; i++) {
+                        // Parse out state and append state to the name for searching
+                        var state = placeArray[0].split("(")[0].trim();
+                        // console.log("state - "+state)
+                        for (var r = 1, place; place = placeArray[r]; r++) {
+                            // console.log(place+" "+state)
+                            breweryArray.push(place+" "+state)
+                        }
+                    }
+
+                    console.log(breweryArray)
+
+                    // Store total breweries to track progress
+                    breweryTotal = breweryArray.length;
+
+                    // Trigger getPlaces with the first item in the array
+                    getPlaces(breweryArray.shift(), 0)
+                });
+                
+            }
+            // getBreweries();
+
+            function getPlaces(brewery, count) {
+                if (brewery === undefined) {
+                    console.log("Undefined brewery name - are we done?")
+                } else {
+                    // Use the google places APi to search for the brewery
+                    var request = {
+                        query: brewery,
+                        fields: ['formatted_address', 'name', 'geometry']
+                    };
+
+                    service = new google.maps.places.PlacesService(map);
+                    service.findPlaceFromQuery(request, function callback(results, status) {
+                        // If the status returns OK - process and create a marker
+                        if (status == google.maps.places.PlacesServiceStatus.OK) {
+                            // Count of the brewery we just processed (starting with 1)
+                            var brewNum = breweryTotal - breweryArray.length
+
+                            console.log("Create Markers: "+brewery)
+                            createMarkers(results, brewNum, brewery);
+
+                            // Number/percentage for the status bar
+                            var statusbarnum = Math.round((brewNum / breweryTotal) * 100)
+                            // console.log("status: " +statusbarnum)
+                            $( "#progressbar" ).progressbar({value: statusbarnum});
+
+                            if (breweryArray.length == 0) {
+                                $( "#progressbar" ).hide();
+                            } else {
+                                // Trigger getPlaces with next brewery in array
+                                var nextBrewery = breweryArray.shift()
+                                console.log("Starting processing for "+nextBrewery)
+                                getPlaces(nextBrewery, 0)
+                            }
+                        } else {
+                            // If APi call returns error
+                            if (breweryArray.length != 0) {
+                                console.log("--ERROR--")
+                                console.log(brewery)
+                                console.log(results);
+                                console.log(status)
+                                // If over the query limit - sleep and try again
+                                if (status == "OVER_QUERY_LIMIT") {
+                                    console.log("sleeping to try again")
+                                    setTimeout(function(){ getPlaces(brewery, 1); }, 10000);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            
+
+            function createMarkers(places, brewNum, brewName) {
+                place = places[0]
+
+                // Image for the marker
+                var image = {
+                    // url: place.icon,
+                    url: "https://cdn4.iconfinder.com/data/icons/location-vol-4/128/location-11-512.png",
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+
+                // Google maps marker
+                var marker = new google.maps.Marker({
+                    map: map,
+                    icon: image,
+                    title: brewName,
+                    position: place.geometry.location
+                });
+
+                // List all breweries
+                var li = document.createElement('li');
+                li.textContent = brewNum + ") " + brewName + " - " + places.length;
+                document.getElementById('places').appendChild(li);
+
+            }
+        </script>
+    </head>
+
+    <body>
+        <div id="map"></div>
+        <div id="places"></div>
+        <div id="progressbar"></div>
+    </body>
+
+
+</html>
