@@ -74,15 +74,10 @@ Resources:
       # Layers:
       #   - !Ref rSharedLayerVersion
       MemorySize: 1028
-      # Policies:
-      #   - S3ReadPolicy:
-      #       BucketName:
-      #         !Ref pWorkerScanFilesBucket
-      #   - S3WritePolicy:
-      #       BucketName:
-      #         !Ref pWorkerScanFilesBucket
-      #   - SESCrudPolicy:
-      #       IdentityName: "*"
+      Policies:
+        - DynamoDBCrudPolicy:
+            tableName:
+              !Ref DynamoDBTable
       Events:
         BreweryByState:
           Type: Api
@@ -114,6 +109,10 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 6 ? * MON-FRI *)
+      Policies:
+        - DynamoDBCrudPolicy:
+            tableName:
+              !Ref DynamoDBTable
 
   #################
   ## DynamoDB
