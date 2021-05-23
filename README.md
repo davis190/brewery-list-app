@@ -32,3 +32,6 @@ Couple additional notes about the way the page works
 The site will look like the below.
 
 ![Brewery List Website](images/brewery_list_website.png "Brewery List Website")
+
+## Map
+[Map README](html/map/README.md)
