@@ -12,4 +12,9 @@ phases:
   build:
     commands:
       - BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region us-east-1 --query "Stacks[].Outputs[?OutputKey=='Bucket'].OutputValue" --output text)
+      - API_KEY=$(aws ssm get-parameter --name /brewery-app/api-key --with-decryption --query "Parameter.Value" --output text)
+      - SHEET_ID=$(aws ssm get-parameter --name /brewery-app/sheet-id --with-decryption --query "Parameter.Value" --output text)
+      - touch html/local_api_keys.js
+      - echo "var API_KEY = \"${API_KEY}\"" >> html/local_api_keys.js
+      - echo "var SHEET_ID = \"${SHEET_ID}\"" >> html/local_api_keys.js
       - aws s3 sync html/ s3://${BUCKET}/
