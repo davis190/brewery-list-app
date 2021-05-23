@@ -1,28 +1,15 @@
 version: 0.2
-        
+
+env:
+  variables:
+    STACK_NAME: "brewery-app-stack"
+
 phases:
   pre_build:
     commands:
       - chmod +x create-or-update-stack.sh
-      - ./create-or-update-stack.sh us-east-1 brewery-app-stack --template-body file://cloudformation.yaml
-  #   finally:
-  #     - command
-  #     - command
-  # build:
-  #   run-as: Linux-user-name
-  #   on-failure: ABORT | CONTINUE
-  #   commands:
-  #     - command
-  #     - command
-  #   finally:
-  #     - command
-  #     - command
-  # post_build:
-  #   run-as: Linux-user-name
-  #   on-failure: ABORT | CONTINUE
-  #   commands:
-  #     - command
-  #     - command
-  #   finally:
-  #     - command
-  #     - command
+      - ./create-or-update-stack.sh us-east-1 ${STACK_NAME} --template-body file://cloudformation.yaml
+  build:
+    commands:
+      - BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region us-east-1 --query "Stacks[].Outputs[?OutputKey=='Bucket'].OutputValue" --output text)
+      - aws s3 sync html/ s3://${BUCKET}/
