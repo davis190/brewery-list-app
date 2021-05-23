@@ -114,3 +114,25 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 6 ? * MON-FRI *)
+
+  #################
+  ## DynamoDB
+  #################
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: Breweries
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      GlobalSecondaryIndexes:
+        - IndexName: state
+          KeySchema:
+            - AttributeName: state
+              KeyType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5

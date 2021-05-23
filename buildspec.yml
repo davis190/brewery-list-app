@@ -29,7 +29,7 @@ phases:
       - echo "var SHEET_ID = \"${SHEET_ID}\"" >> html/local_api_keys.js
       - aws s3 sync html/ s3://${BUCKET}/
 
-    post_build:
+  post_build:
     commands:
       ##########
       ## Invalidate cache
