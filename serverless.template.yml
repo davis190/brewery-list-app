@@ -4,7 +4,7 @@ Description: WorkerScan APIs.
 Parameters: 
     WebUrl: 
       Type: String
-      Default: "https://breweryapi.workerscan.com"
+      Default: "https://breweryapi.claytondavis.dev"
     pACMCertificate:
       Type: String
       Default: "arn:aws:acm:us-east-1:143237551823:certificate/43ff280b-d83a-4af0-99ba-31695ea4d71b"
@@ -39,7 +39,7 @@ Resources:
     Type: AWS::ApiGateway::DomainName
     Properties:
       CertificateArn: !Ref pACMCertificate
-      DomainName: breweryapi.workerscan.com
+      DomainName: breweryapi.claytondavis.dev
   rBasePathMapping:
     Type: 'AWS::ApiGateway::BasePathMapping'
     Properties:
