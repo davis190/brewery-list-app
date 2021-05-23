@@ -125,6 +125,10 @@ Resources:
       AttributeDefinitions: 
         - AttributeName: id
           AttributeType: S
+        - AttributeName: state
+          AttributeType: S
+        - AttributeName: name
+          AttributeType: S
       GlobalSecondaryIndexes:
         - IndexName: state
           KeySchema:
@@ -132,7 +136,7 @@ Resources:
               KeyType: HASH
           Projection: 
             NonKeyAttributes: 
-              - "Name"
+              - "name"
             ProjectionType: "INCLUDE"
       KeySchema: 
         - AttributeName: id
