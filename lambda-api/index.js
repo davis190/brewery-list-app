@@ -8,52 +8,54 @@ exports.handler = (event, context, callback) => {
 		if (event['resource'] == "/brewery/state/{state}" || event['resource'] == "/brewery/state/{state}/count") {
 			console.log("HERE")
 			console.log(event['pathParameters']['state'])
-			var breweries = getBreweriesFromState(event['pathParameters']['state'].toUpperCase())
-			if (event['resource'] == "/brewery/state/{state}") {
-				response(null, breweries['Items'], callback)
-			} else {
-				response(null, breweries['Count'], callback)
-			}
-			
+			getBreweriesFromState(event['pathParameters']['state'].toUpperCase()).then(function(breweries) {
+				if (event['resource'] == "/brewery/state/{state}") {
+					response(null, breweries['Items'], callback)
+				} else {
+					response(null, breweries['Count'], callback)
+				}
+			})
 			// response(null, "MADE IR", callback)
 		}
 	}
 }
 
 function getBreweriesFromState(state_abr) {
-	
-	var params = {
-		ExpressionAttributeValues: {
-			":state": {
-				S: state_abr
-			}
-		}, 
-		KeyConditionExpression: "state = :state", 
-		TableName: process.env.DYNAMODB_TABLE
+	return new Promise ( ( resolve, reject ) => {
+		var params = {
+			ExpressionAttributeValues: {
+				":state_abr": {
+					S: state_abr
+				}
+			}, 
+			ExpressionAttributeNames: { "#dynobase_state": "state" },
+			KeyConditionExpression: "#dynobase_state = :state_abr", 
+			TableName: process.env.DYNAMODB_TABLE
 		};
 		dynamodb.query(params, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);
 			} else {
 				console.log(data);
-				return(data)
+				resolve(data)
 			}
-		 /*
-		 data = {
-		  ConsumedCapacity: {
-		  }, 
-		  Count: 2, 
-		  Items: [
-			 {
+			/*
+			data = {
+			ConsumedCapacity: {
+			}, 
+			Count: 2, 
+			Items: [
+				{
 			"SongTitle": {
-			  S: "Call Me Today"
-			 }
-		   }
-		  ], 
-		  ScannedCount: 2
-		 }
-		 */
-	   	});
+				S: "Call Me Today"
+				}
+			}
+			], 
+			ScannedCount: 2
+			}
+			*/
+		});
+	})
 }
 
 function response(err, res, callback) {

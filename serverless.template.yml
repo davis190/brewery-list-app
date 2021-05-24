@@ -140,7 +140,7 @@ Resources:
           Projection: 
             # NonKeyAttributes: 
             #   - name
-            ProjectionType: "KEYS_ONLY"
+            ProjectionType: "All"
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
