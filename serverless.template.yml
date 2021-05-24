@@ -77,10 +77,10 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
-              !Ref DynamoDBTable
+              !Ref rDynamoDBTable
       Environment:
         Variables:
-          DYNAMODB_TABLE: !Ref DynamoDBTable
+          DYNAMODB_TABLE: !Ref rDynamoDBTable
       Events:
         BreweryByState:
           Type: Api
@@ -115,33 +115,33 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
-              !Ref DynamoDBTable
+              !Ref rDynamoDBTable
       Environment:
         Variables:
-          DYNAMODB_TABLE: !Ref DynamoDBTable
+          DYNAMODB_TABLE: !Ref rDynamoDBTable
 
   #################
   ## DynamoDB
   #################
-  # DynamoDBTable:
-  #   Type: AWS::DynamoDB::Table
-  #   Properties: 
-  #     TableName: Breweries
-  #     AttributeDefinitions: 
-  #       - AttributeName: id
-  #         AttributeType: S
-  #       - AttributeName: state
-  #         AttributeType: S
-  #     GlobalSecondaryIndexes:
-  #       - IndexName: state
-  #         KeySchema:
-  #           - AttributeName: state
-  #             KeyType: HASH
-  #         Projection: 
-  #           # NonKeyAttributes: 
-  #           #   - name
-  #           ProjectionType: "KEYS_ONLY"
-  #     KeySchema: 
-  #       - AttributeName: id
-  #         KeyType: HASH
-  #     BillingMode: PAY_PER_REQUEST
+  rDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: Breweries
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: state
+          AttributeType: S
+      GlobalSecondaryIndexes:
+        - IndexName: state
+          KeySchema:
+            - AttributeName: state
+              KeyType: HASH
+          Projection: 
+            # NonKeyAttributes: 
+            #   - name
+            ProjectionType: "KEYS_ONLY"
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
