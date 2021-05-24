@@ -123,25 +123,25 @@ Resources:
   #################
   ## DynamoDB
   #################
-  DynamoDBTable:
-    Type: AWS::DynamoDB::Table
-    Properties: 
-      TableName: Breweries
-      AttributeDefinitions: 
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: state
-          AttributeType: S
-      GlobalSecondaryIndexes:
-        - IndexName: state
-          KeySchema:
-            - AttributeName: state
-              KeyType: HASH
-          Projection: 
-            # NonKeyAttributes: 
-            #   - name
-            ProjectionType: "KEYS_ONLY"
-      KeySchema: 
-        - AttributeName: id
-          KeyType: HASH
-      BillingMode: PAY_PER_REQUEST
+  # DynamoDBTable:
+  #   Type: AWS::DynamoDB::Table
+  #   Properties: 
+  #     TableName: Breweries
+  #     AttributeDefinitions: 
+  #       - AttributeName: id
+  #         AttributeType: S
+  #       - AttributeName: state
+  #         AttributeType: S
+  #     GlobalSecondaryIndexes:
+  #       - IndexName: state
+  #         KeySchema:
+  #           - AttributeName: state
+  #             KeyType: HASH
+  #         Projection: 
+  #           # NonKeyAttributes: 
+  #           #   - name
+  #           ProjectionType: "KEYS_ONLY"
+  #     KeySchema: 
+  #       - AttributeName: id
+  #         KeyType: HASH
+  #     BillingMode: PAY_PER_REQUEST
