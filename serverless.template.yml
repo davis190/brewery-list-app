@@ -76,7 +76,7 @@ Resources:
       MemorySize: 1028
       Policies:
         - DynamoDBCrudPolicy:
-            tableName:
+            TableName:
               !Ref DynamoDBTable
       Events:
         BreweryByState:
@@ -111,8 +111,11 @@ Resources:
             Schedule: cron(0 6 ? * MON-FRI *)
       Policies:
         - DynamoDBCrudPolicy:
-            tableName:
+            TableName:
               !Ref DynamoDBTable
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref DynamoDBTable
 
   #################
   ## DynamoDB
