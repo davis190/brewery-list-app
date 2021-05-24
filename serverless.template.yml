@@ -128,12 +128,12 @@ Resources:
     Properties: 
       TableName: Breweries
       AttributeDefinitions: 
-        - AttributeName: brewery_id
+        - AttributeName: id
           AttributeType: S
-        - AttributeName: state_abr
+        - AttributeName: state
           AttributeType: S
       GlobalSecondaryIndexes:
-        - IndexName: state
+        - IndexName: state-index
           KeySchema:
             - AttributeName: state
               KeyType: HASH

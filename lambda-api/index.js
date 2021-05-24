@@ -28,7 +28,11 @@ function getBreweriesFromState(state_abr) {
 					S: state_abr
 				}
 			}, 
-			KeyConditionExpression: "state_abr = :state_abr", 
+			ExpressionAttributeNames: {
+				"#state_abr" : "state"
+			},
+			KeyConditionExpression: "#state_abr = :state_abr", 
+			IndexName: "state-index",
 			TableName: process.env.DYNAMODB_TABLE
 		};
 		dynamodb.query(params, function(err, data) {
@@ -38,21 +42,6 @@ function getBreweriesFromState(state_abr) {
 				console.log(data);
 				resolve(data)
 			}
-			/*
-			data = {
-			ConsumedCapacity: {
-			}, 
-			Count: 2, 
-			Items: [
-				{
-			"SongTitle": {
-				S: "Call Me Today"
-				}
-			}
-			], 
-			ScannedCount: 2
-			}
-			*/
 		});
 	})
 }

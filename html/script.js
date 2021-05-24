@@ -1,133 +1,4 @@
-/*
-    OPEN BREWERY DB - API
-    This was using the openbrewerydb api - but it was an incomplete database - the above is to hardcode for now
-*/
-// STATE_ABBREVIATION= {
-//     "California": "CA",
-//     "Colorado": "CO",
-//     "Illinois": "IL",
-//     "Indiana": "IN",
-//     "Iowa": "IA",
-//     "Minnesota": "MN",
-//     "Michigan": "MI",
-//     "Missouri": "MO",
-//     "Nebraska": "NE",
-//     "North Carolina": "NC",
-//     "Washington": "WA",
-//     "Wisconsin": "WI"
-// }
 
-// function getStateBreweries(state, stateVisitedTotal) {
-//     page=1
-//     moreBreweries=true
-//     breweryCount=0
-
-//     console.log(state)
-
-//     while (moreBreweries) {
-//         $.ajax({
-//             url: "https://api.openbrewerydb.org/breweries?by_state="+STATE_ABBREVIATION[state]+"&per_page=50&page="+page,
-//             async: false
-//         })
-//         .done(function( data ) {
-//             breweryCount = breweryCount + data.length
-//             console.log(breweryCount)
-//             if (data.length < 50 || page > 20) {
-//                 console.log("Visited Breweries: "+stateVisitedTotal)
-//                 console.log("Total Breweries: "+breweryCount)
-
-//                 var statusbarnum = Math.round((stateVisitedTotal / breweryCount) * 100)
-
-//                 $( "#list" ).append('<div class="stateTitle">'+state+' '+statusbarnum+'% ('+stateVisitedTotal+'/'+breweryCount+')</div><div class="progressbar" id="progressBar'+STATE_ABBREVIATION[state]+'"></div>')
-
-//                 $( "#progressBar"+STATE_ABBREVIATION[state] ).progressbar({value: statusbarnum});
-//                 moreBreweries=false
-//             }
-//         });
-//         page++
-//     }
-// }
-
-
-
-
-
-/*
-    HARDCODED
-    Data from: https://www.brewersassociation.org/directories/breweries/
-*/
-// HARDCODED_BREWERY_TOTALS = {
-//     "California": {
-//         "Abbr": "CA",
-//         "Total": 973
-//     },
-//     "Colorado": {
-//         "Abbr": "CO",
-//         "Total": 463
-//     },
-//     "Illinois": {
-//         "Abbr": "IL",
-//         "Total": 279
-//     },
-//     "Indiana": {
-//         "Abbr": "IN",
-//         "Total": 201
-//     },
-//     "Iowa": {
-//         "Abbr": "IA",
-//         "Total": 99
-//     },
-//     "Minnesota": {
-//         "Abbr": "MN",
-//         "Total": 197
-//     },
-//     "Michigan": {
-//         "Abbr": "MI",
-//         "Total": 386
-//     },
-//     "Missouri": {
-//         "Abbr": "MO",
-//         "Total": 135
-//     },
-//     "Nebraska": {
-//         "Abbr": "NE",
-//         "Total": 55
-//     },
-//     "North Carolina": {
-//         "Abbr": "NC",
-//         "Total": 333
-//     },
-//     "Washington": {
-//         "Abbr": "WA",
-//         "Total": 437
-//     },
-//     "Wisconsin": {
-//         "Abbr": "WI",
-//         "Total": 226
-//     }
-// }
-
-// function getStateBreweries(state, stateVisitedTotal) {
-//     var breweryCount = HARDCODED_BREWERY_TOTALS[state]["Total"]
-//     var stateAbbr = HARDCODED_BREWERY_TOTALS[state]["Abbr"]
-
-//     var statusbarnum = Math.round((stateVisitedTotal / breweryCount) * 100)
-
-//     $( "#list" ).append('<div class="stateTitle">'+state+' '+statusbarnum+'% ('+stateVisitedTotal+'/'+breweryCount+')</div><div class="progressbar" id="progressBar'+stateAbbr+'"></div>')
-
-//     $( "#progressBar"+stateAbbr ).progressbar({value: statusbarnum});
-//     moreBreweries=false
-// }
-
-
-
-
-
-
-/*
-    Parsing DOM from BrewersAssociation
-    Data from: https://www.brewersassociation.org/directories/breweries/
-*/
 STATE_ABBREVIATION= {
     "California": "CA",
     "Colorado": "CO",
@@ -145,43 +16,39 @@ STATE_ABBREVIATION= {
 function getStateBreweries(state, stateVisitedTotal, fullBreweryArray, inBusinessBreweryArray) {
     console.log(state)
 
-    console.log("Google Sheet Breweries: "+stateVisitedTotal)
-    console.log("Total Breweries: "+breweryCount)
-
-    var statusbarnum = Math.round((stateVisitedTotal / breweryCount) * 100)
-
-    // Add the state title + empty progress bar
-    $( "#list" ).append('<div class="stateTitle" onclick="$(\'#breweryList'+STATE_ABBREVIATION[state]+'\').toggle()">'+state+' '+statusbarnum+'% ('+stateVisitedTotal+'/'+breweryCount+')</div><div class="progressbar" id="progressBar'+STATE_ABBREVIATION[state]+'"></div>')
-
-    // Add list of visited breweries
-    var breweryList = ""
-    $.each(fullBreweryArray, function( index, brewery) {
-        var style = ""
-        // If brewery is in the google sheets ignore array - color it red, but still display it
-        if (!inBusinessBreweryArray.includes(brewery)) {
-            style='style="color:red"'
-        }
-        breweryList = breweryList + '<div class="brewery" '+style+'>'+brewery+'</div>'
-    })
-    $( "#list" ).append('<div class="breweryList" id="breweryList'+STATE_ABBREVIATION[state]+'">'+breweryList+'</div>')
-
-    // populate progress bar with percentage
-    $( "#progressBar"+STATE_ABBREVIATION[state] ).progressbar({value: statusbarnum});
-}
-
-function getBrewersAssociationBreweries() {
     var random_num = Math.floor(Math.random() * 999999999)
     $.ajax({
-        url: "https://www.brewersassociation.org/wp-content/themes/ba2019/json-store/breweries/breweries.json?nocache="+random_num
+        url: "https://breweryapi.claytondavis.dev/api/brewery/state/"+STATE_ABBREVIATION[state]+"/count",
+        async: false,
+        method: "GET",
+        // data: "action=get_breweries&_id="+state+"&search_by=statename"
     })
-    .done(function( data ) { 
-        var brewery_data = JSON.parse(data)
-        console.log(brewery_data)
-        $.each(fullBreweryArray, function( index, brewery) {
+    .done(function( data ) {
+        console.log(data)
+        var breweryCount = data
+        console.log("Google Sheet Breweries: "+stateVisitedTotal)
+        console.log("Total Breweries: "+breweryCount)
 
+        var statusbarnum = Math.round((stateVisitedTotal / breweryCount) * 100)
+
+        // Add the state title + empty progress bar
+        $( "#list" ).append('<div class="stateTitle" onclick="$(\'#breweryList'+STATE_ABBREVIATION[state]+'\').toggle()">'+state+' '+statusbarnum+'% ('+stateVisitedTotal+'/'+breweryCount+')</div><div class="progressbar" id="progressBar'+STATE_ABBREVIATION[state]+'"></div>')
+
+        // Add list of visited breweries
+        var breweryList = ""
+        $.each(fullBreweryArray, function( index, brewery) {
+            var style = ""
+            // If brewery is in the google sheets ignore array - color it red, but still display it
+            if (!inBusinessBreweryArray.includes(brewery)) {
+                style='style="color:red"'
+            }
+            breweryList = breweryList + '<div class="brewery" '+style+'>'+brewery+'</div>'
         })
-        // getSheetBreweries()
-    })
+        $( "#list" ).append('<div class="breweryList" id="breweryList'+STATE_ABBREVIATION[state]+'">'+breweryList+'</div>')
+
+        // populate progress bar with percentage
+        $( "#progressBar"+STATE_ABBREVIATION[state] ).progressbar({value: statusbarnum});
+    });
 }
 
 function getSheetBreweries() {
@@ -214,4 +81,4 @@ function getSheetBreweries() {
     
 }
 
-getBrewersAssociationBreweries()
+getSheetBreweries()
