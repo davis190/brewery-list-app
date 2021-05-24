@@ -28,8 +28,7 @@ function getBreweriesFromState(state_abr) {
 					S: state_abr
 				}
 			}, 
-			ExpressionAttributeNames: { "#dynobase_state": "state" },
-			KeyConditionExpression: "#dynobase_state = :state_abr", 
+			KeyConditionExpression: "state_abr = :state_abr", 
 			TableName: process.env.DYNAMODB_TABLE
 		};
 		dynamodb.query(params, function(err, data) {

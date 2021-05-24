@@ -30,13 +30,13 @@ exports.handler = (event, context, callback) => {
 						console.log(brewery)
 						var params = {
 								Item: {
-									"id": {
+									"brewery_id": {
 										S: brewery['BreweryDBID']
 									}, 
-									"state": {
+									"state_abr": {
 										S: brewery['StateProvince']
 									}, 
-									"name": {
+									"brewery_name": {
 										S: brewery['InstituteName']
 									},
 									"address": {
