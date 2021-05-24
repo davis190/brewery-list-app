@@ -1,4 +1,5 @@
 var https = require('https');
+var dynamodb = new AWS.DynamoDB();
 
 exports.handler = (event, context, callback) => {
 	var random_num = Math.floor(Math.random() * 999999999)
@@ -26,6 +27,50 @@ exports.handler = (event, context, callback) => {
                 	    console.log("-------")
                 	    // console.log(brewery['Country'] + " - " + brewery['StateProvince'])
 						console.log(brewery)
+						var params = {
+							Item: {
+								"id": {
+									S: brewery['BreweryDBID']
+								}, 
+								"state": {
+									S: brewery['StateProvince']
+								}, 
+								"name": {
+									S: brewery['InstituteName']
+								},
+								"address": {
+									S: brewery['Address1']
+								},
+								"city": {
+									S: brewery['City']
+								},
+								"zip": {
+									S: brewery['Zip']
+								},
+								"lat": {
+									S: brewery['Latitude']
+								},
+								"lon": {
+									S: brewery['Longitude']
+								},
+								"type": {
+									S: brewery['BreweryType']
+								}
+							}, 
+							TableName: process.env.DYNAMODB_TABLE
+						   };
+						   dynamodb.putItem(params, function(err, data) {
+							 if (err) console.log(err, err.stack); // an error occurred
+							 else     console.log(data);           // successful response
+							 /*
+							 data = {
+							  ConsumedCapacity: {
+							   CapacityUnits: 1, 
+							   TableName: "Music"
+							  }
+							 }
+							 */
+						   });
                     }
                 })
             } catch(e) {
