@@ -1,21 +1,77 @@
-const https = require('https');
+var AWS			 = require('aws-sdk')
+var dynamodb = new AWS.DynamoDB();
 
 exports.handler = (event, context, callback) => {
-	var random_num = Math.floor(Math.random() * 999999999)
-	const req = https.get("https://www.brewersassociation.org/wp-content/themes/ba2019/json-store/breweries/breweries.json?nocache="+random_num, function(res) {
-	res.on('data', chunk => {
-		dataString += chunk;
-	});
-	res.on('end', () => {
-		console.log(dataString);
-		dataString['ResultData'].forEach(function(brewery) {
-			console.log(brewery)
-		})
-	});
-	});
+	console.log(event)
 
-	req.on('error', (e) => {
-		console.log("ERROR:")
-		console.error(e);
-	});
+	if (event['httpMethod'] == "GET") {
+		if (event['resource'] == "/brewery/state/{state}" || event['resource'] == "/brewery/state/{state}/count") {
+			console.log("HERE")
+			console.log(event['pathParameters']['state'])
+			var breweries = getBreweriesFromState(event['pathParameters']['state'].toUpperCase())
+			if (event['resource'] == "/brewery/state/{state}") {
+				response(null, breweries['Items'], callback)
+			} else {
+				response(null, breweries['Count'], callback)
+			}
+			
+			// response(null, "MADE IR", callback)
+		}
+	}
+}
+
+function getBreweriesFromState(state_abr) {
+	
+	var params = {
+		ExpressionAttributeValues: {
+			":state": {
+				S: state_abr
+			}
+		}, 
+		KeyConditionExpression: "state = :state", 
+		TableName: process.env.DYNAMODB_TABLE
+		};
+		dynamodb.query(params, function(err, data) {
+			if (err) {
+				console.log(err, err.stack);
+			} else {
+				console.log(data);
+				return(data)
+			}
+		 /*
+		 data = {
+		  ConsumedCapacity: {
+		  }, 
+		  Count: 2, 
+		  Items: [
+			 {
+			"SongTitle": {
+			  S: "Call Me Today"
+			 }
+		   }
+		  ], 
+		  ScannedCount: 2
+		 }
+		 */
+	   	});
+}
+
+function response(err, res, callback) {
+    console.log("API Response")
+    if (err) {
+        console.log(err)
+    }
+    // mysql.end()
+    callback(null, {
+        statusCode: err ? '400' : '200',
+        body: err ? JSON.stringify(err) : JSON.stringify(res),
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Access-Control-Allow-Origin': 'https://app.workerscan.com',
+            'Access-Control-Allow-Origin': '*',
+            // 'Access-Control-Allow-Headers': 'Authorization',
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
+        }
+    });
 }

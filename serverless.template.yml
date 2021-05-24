@@ -78,6 +78,9 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName:
               !Ref DynamoDBTable
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref DynamoDBTable
       Events:
         BreweryByState:
           Type: Api
