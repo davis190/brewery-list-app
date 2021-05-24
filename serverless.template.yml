@@ -108,7 +108,7 @@ Resources:
         InvocationLevel:
           Type: Schedule
           Properties:
-            Schedule: cron(0 6 ? * MON-FRI *)
+            Schedule: cron(0 6 1 * ? *)
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
@@ -135,9 +135,9 @@ Resources:
             - AttributeName: state
               KeyType: HASH
           Projection: 
-            NonKeyAttributes: 
-              - name
-            ProjectionType: "INCLUDE"
+            # NonKeyAttributes: 
+            #   - name
+            ProjectionType: "KEYS_ONLY"
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
