@@ -160,7 +160,7 @@ Resources:
       FunctionName: CRON-GS-BA-Link
       Handler: index.handler
       # Runtime: nodejs8.10
-      CodeUri: ./lambda-bs-gs-link-cron/
+      CodeUri: ./lambda-ba-gs-link-cron/
       Description: CRON used to link the GA and BA table data together
       # Layers:
       #   - !Ref rSharedLayerVersion
