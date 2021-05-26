@@ -64,7 +64,7 @@ Resources:
   ###################
   ## Worker APIs
   ###################
-  rBreweryApi:
+  rBrewersAssociationApi:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: index.handler
@@ -77,21 +77,21 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
-              !Ref rDynamoDBTable
+              !Ref rDynamoDBBrewersAssociationTable
       Environment:
         Variables:
-          DYNAMODB_TABLE: !Ref rDynamoDBTable
+          DYNAMODB_TABLE: !Ref rDynamoDBBrewersAssociationTable
       Events:
         BreweryByState:
           Type: Api
           Properties:
-            Path: '/brewery/state/{state}'
+            Path: '/brewery/ba/state/{state}'
             Method: get
             RestApiId: !Ref rApi
         BreweryByStateCount:
           Type: Api
           Properties:
-            Path: '/brewery/state/{state}/count'
+            Path: '/brewery/ba/state/{state}/count'
             Method: get
             RestApiId: !Ref rApi
   ###################
