@@ -163,7 +163,7 @@ Resources:
           Projection: 
             # NonKeyAttributes: 
             #   - name
-            ProjectionType: "All"
+            ProjectionType: "ALL"
         - IndexName: brewery-name-index
           KeySchema:
             - AttributeName: brewery_name
@@ -171,7 +171,7 @@ Resources:
           Projection: 
             # NonKeyAttributes: 
             #   - name
-            ProjectionType: "All"
+            ProjectionType: "ALL"
       KeySchema: 
         - AttributeName: id
           KeyType: HASH
@@ -196,7 +196,7 @@ Resources:
           Projection: 
             # NonKeyAttributes: 
             #   - name
-            ProjectionType: "All"
+            ProjectionType: "ALL"
         - IndexName: brewery-id-index
           KeySchema:
             - AttributeName: brewery_id
@@ -204,7 +204,7 @@ Resources:
           Projection: 
             # NonKeyAttributes: 
             #   - name
-            ProjectionType: "All"
+            ProjectionType: "ALL"
       KeySchema: 
         - AttributeName: brewery_name
           KeyType: HASH
