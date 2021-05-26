@@ -2,9 +2,14 @@
     <head>
         <title>Brewery List</title>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <!-- <link rel="stylesheet" href="/resources/demos/style.css"> -->
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+        <!-- Data Tables-->
+        <link rel="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+        <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 
         <script src="ignore_lists/ignore_list.js"></script>
         <script src="ignore_lists/ignore_list_CA.js"></script>
@@ -12,11 +17,15 @@
         <script src="ignore_lists/ignore_list_IA.js"></script>
         <script src="ignore_lists/ignore_list_IL.js"></script>
         <script src="ignore_lists/ignore_list_IN.js"></script>
+        <script src="ignore_lists/ignore_list_KY.js"></script>
         <script src="ignore_lists/ignore_list_MI.js"></script>
         <script src="ignore_lists/ignore_list_MN.js"></script>
         <script src="ignore_lists/ignore_list_MO.js"></script>
         <script src="ignore_lists/ignore_list_NC.js"></script>
         <script src="ignore_lists/ignore_list_NE.js"></script>
+        <script src="ignore_lists/ignore_list_NV.js"></script>
+        <script src="ignore_lists/ignore_list_OH.js"></script>
+        <script src="ignore_lists/ignore_list_TX.js"></script>
         <script src="ignore_lists/ignore_list_WA.js"></script>
         <script src="ignore_lists/ignore_list_WI.js"></script>
 
@@ -77,7 +86,9 @@
             <center>
                 Info is pulled from the <a href="https://www.brewersassociation.org/directories/breweries/">Brewers Association</a>
                 <br />Contract and Planning brewery types are excluded as they can not be visited
-                <br />Click the state to view visited breweries
+                <br />Use buttons view visited & unvisited breweries
+                <br /><p style="color:red">Red = Closed</p> and <p style="color:blue">Blue = not in the brewers association list</p>
+                <br />View a map of this data <a href='/maps/index.html'>here</a>
             </center>
         </div>
         <div id="list"></div>

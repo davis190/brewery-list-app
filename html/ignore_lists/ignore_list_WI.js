@@ -5,6 +5,7 @@ baIgnoreList['WI'] = [
     "Great Dane Pub and Brewing Co- Wausau",
     "Great Dane Pub and Brewing Co -- Hilldale",
     "Great Dane Pub and Brewing Co - Fitchburg",
+    "MillerCoors Brewing Co - Milwaukee",
     "Milwaukee Ale House",
     "Milwaukee Brewing Co - Production Facility",
     "New Glarus Brewing Co - Riverside",
@@ -19,5 +20,7 @@ baIgnoreList['WI'] = [
 // Google sheet ignore list - breweries that are no longer open
 gsIgnoreList['WI'] = [
     "Brenner Brewing Co",
-    "D14 Brewery & Pub"
+    "D14 Brewery & Pub",
+    "Horny Goat Brewing Co",
+    "Like Minds Brewery"
 ]

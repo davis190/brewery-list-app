@@ -1,10 +1,9 @@
 //Brewers association ignore list - breweries that are duplicated or are no longer open
-baIgnoreList['NE'] = [
-    "Granite City Food & Brewery (#16)",
-    "Nebraska Brewing Co - La Vista"
+baIgnoreList['NV'] = [
+
 ]
 
 // Google sheet ignore list - breweries that are no longer open
-gsIgnoreList['NE'] = [
-    "Blue Blood Brewing Co"
+gsIgnoreList['NV'] = [
+
 ]

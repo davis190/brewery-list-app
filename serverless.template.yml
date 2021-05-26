@@ -97,13 +97,13 @@ Resources:
   ###################
   ## CRON
   ###################
-  rCRONBreweryDynamoPopulation:
+  rCRONBrewersAssociationDynamoPopulation:
     Type: 'AWS::Serverless::Function'
     Properties:
-      Handler: index.handler
+      Handler: index.brewers_association_handler
       # Runtime: nodejs8.10
       CodeUri: ./lambda-cron/
-      Description: CRON function used to populate dynamo with brewery information
+      Description: CRON function used to populate dynamo with brewery information from the brewers association
       # Layers:
       #   - !Ref rSharedLayerVersion
       MemorySize: 1028
@@ -115,18 +115,41 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
-              !Ref rDynamoDBTable
+              !Ref rDynamoDBBrewersAssociationTable
       Environment:
         Variables:
-          DYNAMODB_TABLE: !Ref rDynamoDBTable
+          DYNAMODB_TABLE: !Ref rDynamoDBBrewersAssociationTable
+
+  rCRONGoogleSheetsDynamoPopulation:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.google_sheets_handler
+      # Runtime: nodejs8.10
+      CodeUri: ./lambda-cron/
+      Description: CRON function used to populate dynamo with visited brewery information from google sheets
+      # Layers:
+      #   - !Ref rSharedLayerVersion
+      MemorySize: 1028
+      Events:
+        InvocationLevel:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 6 1 * ? *)
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              !Ref rDynamoDBGoogleSheetsBreweriesTable
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref rDynamoDBGoogleSheetsBreweriesTable
 
   #################
   ## DynamoDB
   #################
-  rDynamoDBTable:
+  rDynamoDBBrewersAssociationTable:
     Type: AWS::DynamoDB::Table
     Properties: 
-      TableName: Breweries
+      TableName: BrewersAssociation
       AttributeDefinitions: 
         - AttributeName: id
           AttributeType: S
@@ -141,7 +164,48 @@ Resources:
             # NonKeyAttributes: 
             #   - name
             ProjectionType: "All"
+        - IndexName: brewery-name-index
+          KeySchema:
+            - AttributeName: brewery_name
+              KeyType: HASH
+          Projection: 
+            # NonKeyAttributes: 
+            #   - name
+            ProjectionType: "All"
       KeySchema: 
         - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  rDynamoDBGoogleSheetsBreweriesTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: GoogleSheetsBreweries
+      AttributeDefinitions: 
+        - AttributeName: brewery_name
+          AttributeType: S
+        - AttributeName: state
+          AttributeType: S
+        - AttributeName: brewery_id
+          AttributeType: S
+      GlobalSecondaryIndexes:
+        - IndexName: state-index
+          KeySchema:
+            - AttributeName: state
+              KeyType: HASH
+          Projection: 
+            # NonKeyAttributes: 
+            #   - name
+            ProjectionType: "All"
+        - IndexName: brewery-id-index
+          KeySchema:
+            - AttributeName: brewery_id
+              KeyType: HASH
+          Projection: 
+            # NonKeyAttributes: 
+            #   - name
+            ProjectionType: "All"
+      KeySchema: 
+        - AttributeName: brewery_name
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST

@@ -9,8 +9,27 @@ exports.handler = (event, context, callback) => {
 			console.log("HERE")
 			console.log(event['pathParameters']['state'])
 			getBreweriesFromState(event['pathParameters']['state'].toUpperCase()).then(function(breweries) {
+				console.log(breweries)
 				if (event['resource'] == "/brewery/state/{state}") {
-					response(null, breweries['Items'], callback)
+					var cleaned_breweries = []
+					breweries['Items'].forEach(function(dynamo_brewery) {
+						cleaned_breweries.push(AWS.DynamoDB.Converter.unmarshall(dynamo_brewery))
+					})
+					console.log("CLEANED")
+					console.log(cleaned_breweries)
+					if (typeof event['queryStringParameters'] !== 'undefined' && event['queryStringParameters'] != null) {
+						if (typeof event['queryStringParameters']['field'] !== 'undefined') {
+							var newArray = []
+							cleaned_breweries.forEach(function(brewery) {
+								newArray.push(brewery[event['queryStringParameters']['field']])
+							})
+							response(null, newArray, callback)
+						} else {
+							response(null, cleaned_breweries, callback)
+						}
+					} else {
+						response(null, cleaned_breweries, callback)
+					}
 				} else {
 					response(null, breweries['Count'], callback)
 				}
