@@ -77,10 +77,10 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
-              !Ref rDynamoDBBrewersAssociationTable
+              !Ref rDynamoDB_BATable
       Environment:
         Variables:
-          DYNAMODB_TABLE: !Ref rDynamoDBBrewersAssociationTable
+          DYNAMODB_TABLE: !Ref rDynamoDB_BATable
       Events:
         BreweryByState:
           Type: Api
@@ -115,10 +115,10 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
-              !Ref rDynamoDBBrewersAssociationTable
+              !Ref rDynamoDB_BATable
       Environment:
         Variables:
-          DYNAMODB_TABLE: !Ref rDynamoDBBrewersAssociationTable
+          DYNAMODB_TABLE: !Ref rDynamoDB_BATable
 
   rCRON_GSDynamoPopulation:
     Type: 'AWS::Serverless::Function'
@@ -138,10 +138,10 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
-              !Ref rDynamoDBGoogleSheetsBreweriesTable
+              !Ref rDynamoDB_GSTable
       Environment:
         Variables:
-          DYNAMODB_TABLE: !Ref rDynamoDBGoogleSheetsBreweriesTable
+          DYNAMODB_TABLE: !Ref rDynamoDB_GSTable
 
   #################
   ## DynamoDB
