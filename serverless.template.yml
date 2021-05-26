@@ -154,6 +154,34 @@ Resources:
         Variables:
           DYNAMODB_TABLE: !Ref rDynamoDbGsTable
 
+  rCronGsBaLink:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: CRON-GS-BA-Link
+      Handler: index.handler
+      # Runtime: nodejs8.10
+      CodeUri: ./lambda-bs-ga-link-cron/
+      Description: CRON used to link the GA and BA table data together
+      # Layers:
+      #   - !Ref rSharedLayerVersion
+      MemorySize: 1028
+      Events:
+        InvocationLevel:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 6 1 * ? *)
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              !Ref rDynamoDbGsTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              !Ref rDynamoDbBaTable
+      Environment:
+        Variables:
+          GS_DYNAMODB_TABLE: !Ref rDynamoDbGsTable
+          BA_DYNAMODB_TABLE: !Ref rDynamoDbBaTable
+
   #################
   ## DynamoDB
   #################

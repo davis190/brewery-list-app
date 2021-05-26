@@ -37,34 +37,52 @@ exports.handler = (event, context, callback) => {
 			ssm.getParameter(params, function(err, SHEET_ID) {
 				if (err) console.log(err, err.stack); // an error occurred
 				else {
-					var FETCH_URL = "https://sheets.googleapis.com/v4/spreadsheets/"+SHEET_ID+"/values/USA\!A2:P100?key="+API_KEY+"&majorDimension=COLUMNS"
+					var FETCH_URL = "https://sheets.googleapis.com/v4/spreadsheets/"+SHEET_ID['Parameter']['Value']+"/values/USA\!A2:P100?key="+API_KEY['Parameter']['Value']+"&majorDimension=COLUMNS"
 					console.log(FETCH_URL)
 
-					https.get(FETCH_URL, function(data) {
-						data['values'].forEach(function(row) {
-							var state = row[0].split("(")[0].trim();
-							var state_abr = STATE_ABBREVIATION[state]
+					https.get(FETCH_URL, function(res) {
+						var body = [];
+						res.on('data', function(chunk) {
+							body.push(chunk);
+						});
+						res.on('end', function() {
+							try {
+								body = JSON.parse(Buffer.concat(body).toString());
+								console.log(body)
+								console.log(body['values'])
+								body['values'].forEach(function(row) {
+									var state = row[0].split("(")[0].trim();
+									var state_abr = STATE_ABBREVIATION[state]
 
-							for (var r = 1; r < row.length; r++) {
-								var params = {
-									Item: {
-										"state_abr": {
-											S: state_abr
-										}, 
-										"brewery_name": {
-											S: row[r]
-										}
-									}, 
-									TableName: process.env.DYNAMODB_TABLE
-								};
-								dynamodb.putItem(params, function(err, data) {
-									if (err) console.log(err, err.stack); // an error occurred
-									else	 console.log(data);		   // successful response
-									
-								});
+									for (var r = 1; r < row.length; r++) {
+										var params = {
+											Item: {
+												"state_abr": {
+													S: state_abr
+												}, 
+												"brewery_name": {
+													S: row[r]
+												}
+											}, 
+											TableName: process.env.DYNAMODB_TABLE
+										};
+										dynamodb.putItem(params, function(err, data) {
+											if (err) console.log(err, err.stack); // an error occurred
+											else	 console.log(data);		   // successful response
+											
+										});
+									}
+								})
+							} catch(e) {
+								console.log("ERROR")
+								console.error(e);
 							}
-						})
-					})
+							// console.log(body);
+						});
+					}).on('error', function(e) {
+						console.log("Got error: " + e.message);
+						context.done(null, 'FAILURE');
+					});
 				}
 			});
 		}
