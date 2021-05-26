@@ -100,9 +100,9 @@ Resources:
   rCRONBrewersAssociationDynamoPopulation:
     Type: 'AWS::Serverless::Function'
     Properties:
-      Handler: index.brewers_association_handler
+      Handler: index.handler
       # Runtime: nodejs8.10
-      CodeUri: ./lambda-cron/
+      CodeUri: ./lambda-brewers-association-cron/
       Description: CRON function used to populate dynamo with brewery information from the brewers association
       # Layers:
       #   - !Ref rSharedLayerVersion
@@ -123,9 +123,9 @@ Resources:
   rCRONGoogleSheetsDynamoPopulation:
     Type: 'AWS::Serverless::Function'
     Properties:
-      Handler: index.google_sheets_handler
+      Handler: index.handler
       # Runtime: nodejs8.10
-      CodeUri: ./lambda-cron/
+      CodeUri: ./lambda-google-sheets-cron/
       Description: CRON function used to populate dynamo with visited brewery information from google sheets
       # Layers:
       #   - !Ref rSharedLayerVersion

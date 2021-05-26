@@ -22,7 +22,7 @@ var STATE_ABBREVIATION= {
     "Wisconsin": "WI"
 }
 
-exports.brewers_association_handler = (event, context, callback) => {
+exports.handler = (event, context, callback) => {
 	var random_num = Math.floor(Math.random() * 999999999)
 	var FETCH_URL = "https://www.brewersassociation.org/wp-content/themes/ba2019/json-store/breweries/breweries.json?nocache="+random_num
 	console.log(FETCH_URL)
@@ -97,53 +97,4 @@ exports.brewers_association_handler = (event, context, callback) => {
 			console.log("Got error: " + e.message);
 			context.done(null, 'FAILURE');
 		});
-}
-
-exports.google_sheets_handler = (event, context, callback) => {
-	var params = {
-		Name: '/brewery-app/api-key',
-		WithDecryption: true
-	};
-	ssm.getParameter(params, function(err, API_KEY) {
-		if (err) console.log(err, err.stack); // an error occurred
-		else {
-			var params = {
-				Name: '/brewery-app/sheet-id',
-				WithDecryption: true
-			};
-			ssm.getParameter(params, function(err, SHEET_ID) {
-				if (err) console.log(err, err.stack); // an error occurred
-				else {
-					var FETCH_URL = "https://sheets.googleapis.com/v4/spreadsheets/"+SHEET_ID+"/values/USA\!A2:P100?key="+API_KEY+"&majorDimension=COLUMNS"
-					console.log(FETCH_URL)
-
-					https.get(FETCH_URL, function(data) {
-						data['values'].forEach(function(row) {
-							var state = row[0].split("(")[0].trim();
-							var state_abr = STATE_ABBREVIATION[state]
-
-							for (var r = 1; r < row.length; r++) {
-								var params = {
-									Item: {
-										"state_abr": {
-											S: state_abr
-										}, 
-										"brewery_name": {
-											S: row[r]
-										}
-									}, 
-									TableName: process.env.DYNAMODB_TABLE
-								};
-								dynamodb.putItem(params, function(err, data) {
-									if (err) console.log(err, err.stack); // an error occurred
-									else	 console.log(data);		   // successful response
-									
-								});
-							}
-						})
-					})
-				}
-			});
-		}
-	});
 }
