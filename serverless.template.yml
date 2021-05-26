@@ -146,6 +146,10 @@ Resources:
             ParameterName: "brewery-app/api-key"
         - SSMParameterReadPolicy:
             ParameterName: "brewery-app/sheet-id"
+        - SSMParameterReadPolicy:
+            ParameterName: "/brewery-app/api-key"
+        - SSMParameterReadPolicy:
+            ParameterName: "/brewery-app/sheet-id"
       Environment:
         Variables:
           DYNAMODB_TABLE: !Ref rDynamoDbGsTable
