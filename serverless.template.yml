@@ -154,7 +154,7 @@ Resources:
     Properties: 
       TableName: BrewersAssociation
       AttributeDefinitions: 
-        - AttributeName: id
+        - AttributeName: brewery_id
           AttributeType: S
         - AttributeName: state
           AttributeType: S
@@ -178,7 +178,7 @@ Resources:
             #   - name
             ProjectionType: "ALL"
       KeySchema: 
-        - AttributeName: id
+        - AttributeName: brewery_id
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 
