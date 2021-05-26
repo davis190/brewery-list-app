@@ -64,9 +64,10 @@ Resources:
   ###################
   ## Worker APIs
   ###################
-  rAPI_BA:
+  rApiBa:
     Type: 'AWS::Serverless::Function'
     Properties:
+      FunctionName: API-BrewersAssociation
       Handler: index.handler
       # Runtime: nodejs8.10
       CodeUri: ./lambda-api/
@@ -77,10 +78,10 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
-              !Ref rDynamoDB_BATable
+              !Ref rDynamoDbBaTable
       Environment:
         Variables:
-          DYNAMODB_TABLE: !Ref rDynamoDB_BATable
+          DYNAMODB_TABLE: !Ref rDynamoDbBaTable
       Events:
         BreweryByState:
           Type: Api
@@ -97,9 +98,10 @@ Resources:
   ###################
   ## CRON
   ###################
-  rCRON_BADynamoPopulation:
+  rCronBaDynamoPopulation:
     Type: 'AWS::Serverless::Function'
     Properties:
+      FunctionName: CRON-BrewersAssociationPopulation
       Handler: index.handler
       # Runtime: nodejs8.10
       CodeUri: ./lambda-brewers-association-cron/
@@ -115,14 +117,15 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
-              !Ref rDynamoDB_BATable
+              !Ref rDynamoDbBaTable
       Environment:
         Variables:
-          DYNAMODB_TABLE: !Ref rDynamoDB_BATable
+          DYNAMODB_TABLE: !Ref rDynamoDbBaTable
 
-  rCRON_GSDynamoPopulation:
+  rCronGsDynamoPopulation:
     Type: 'AWS::Serverless::Function'
     Properties:
+      FunctionName: Cron-GoogleSheetsPopulation
       Handler: index.handler
       # Runtime: nodejs8.10
       CodeUri: ./lambda-google-sheets-cron/
@@ -138,15 +141,15 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
-              !Ref rDynamoDB_GSTable
+              !Ref rDynamoDbGsTable
       Environment:
         Variables:
-          DYNAMODB_TABLE: !Ref rDynamoDB_GSTable
+          DYNAMODB_TABLE: !Ref rDynamoDbGsTable
 
   #################
   ## DynamoDB
   #################
-  rDynamoDB_BATable:
+  rDynamoDbBaTable:
     Type: AWS::DynamoDB::Table
     Properties: 
       TableName: BrewersAssociation
@@ -179,7 +182,7 @@ Resources:
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 
-  rDynamoDB_GSTable:
+  rDynamoDbGsTable:
     Type: AWS::DynamoDB::Table
     Properties: 
       TableName: GoogleSheetsBreweries
