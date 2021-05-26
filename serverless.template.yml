@@ -64,7 +64,7 @@ Resources:
   ###################
   ## Worker APIs
   ###################
-  rBrewersAssociationApi:
+  rAPI_BA:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: index.handler
@@ -97,7 +97,7 @@ Resources:
   ###################
   ## CRON
   ###################
-  rCRONBrewersAssociationDynamoPopulation:
+  rCRON_BADynamoPopulation:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: index.handler
@@ -120,7 +120,7 @@ Resources:
         Variables:
           DYNAMODB_TABLE: !Ref rDynamoDBBrewersAssociationTable
 
-  rCRONGoogleSheetsDynamoPopulation:
+  rCRON_GSDynamoPopulation:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: index.handler
@@ -134,7 +134,7 @@ Resources:
         InvocationLevel:
           Type: Schedule
           Properties:
-            Schedule: cron(0 6 1 * ? *)
+            Schedule: cron(0  1 * ? *)
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
@@ -146,7 +146,7 @@ Resources:
   #################
   ## DynamoDB
   #################
-  rDynamoDBBrewersAssociationTable:
+  rDynamoDB_BATable:
     Type: AWS::DynamoDB::Table
     Properties: 
       TableName: BrewersAssociation
@@ -179,7 +179,7 @@ Resources:
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 
-  rDynamoDBGoogleSheetsBreweriesTable:
+  rDynamoDB_GSTable:
     Type: AWS::DynamoDB::Table
     Properties: 
       TableName: GoogleSheetsBreweries
