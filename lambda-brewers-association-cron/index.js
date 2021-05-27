@@ -23,6 +23,9 @@ var STATE_ABBREVIATION= {
 }
 
 exports.handler = (event, context, callback) => {
+	var updated_date_date = new Date()
+	var updated_date = updated_date_date.toString()
+
 	var random_num = Math.floor(Math.random() * 999999999)
 	var FETCH_URL = "https://www.brewersassociation.org/wp-content/themes/ba2019/json-store/breweries/breweries.json?nocache="+random_num
 	console.log(FETCH_URL)
@@ -49,42 +52,60 @@ exports.handler = (event, context, callback) => {
 						// console.log(brewery['Country'] + " - " + brewery['StateProvince'])
 						console.log(brewery)
 						var params = {
-								Item: {
-									"brewery_id": {
-										S: brewery['BreweryDBID']
-									}, 
-									"state_abr": {
-										S: brewery['StateProvince']
-									}, 
-									"brewery_name": {
-										S: brewery['InstituteName']
-									},
-									"address": {
-										S: brewery['Address1']
-									},
-									"city": {
-										S: brewery['City']
-									},
-									"zip": {
-										S: brewery['Zip']
-									},
-									"lat": {
-										S: brewery['Latitude']
-									},
-									"lon": {
-										S: brewery['Longitude']
-									},
-									"type": {
-										S: brewery['BreweryType']
-									}
+							ExpressionAttributeNames: {
+								"#s": "state", 
+								"#bn": "brewery_name",
+								"#a": "address",
+								"#c": "city",
+								"#z": "zip",
+								"#la": "lat",
+								"#lo": "lon",
+								"#t": "type",
+								"#ud": "updated_date"
+							}, 
+							ExpressionAttributeValues: {
+								":s": {
+									S: brewery['StateProvince']
 								}, 
-								TableName: process.env.DYNAMODB_TABLE
-							};
-							dynamodb.putItem(params, function(err, data) {
-								if (err) console.log(err, err.stack); // an error occurred
-								else	 console.log(data);		   // successful response
-								
-							});
+								":bn": {
+									S: brewery['InstituteName']
+								},
+								":a": {
+									S: brewery['Address1']
+								},
+								":c": {
+									S: brewery['City']
+								},
+								":z": {
+									S: brewery['Zip']
+								},
+								":la": {
+									S: brewery['Latitude']
+								},
+								":lo": {
+									S: brewery['Longitude']
+								},
+								":t": {
+									S: brewery['BreweryType']
+								},
+								":ud": {
+									S: updated_date
+								}
+							}, 
+							Key: {
+								"brewery_id": {
+									S: brewery['BreweryDBID']
+								}
+							}, 
+							ReturnValues: "ALL_NEW", 
+							TableName: process.env.DYNAMODB_TABLE, 
+							UpdateExpression: "SET #s = :s, #bn = :bn, #a = :a, #c = :c, #z = :z, #la = :la, #lo = :lo, #t = :t, #ud = :ud"
+						};
+						dynamodb.updateItem(params, function(err, data) {
+							if (err) console.log(err, err.stack); // an error occurred
+							else	 console.log(data);		   // successful response
+							
+						});
 					}
 				})
 			} catch(e) {

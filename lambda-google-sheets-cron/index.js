@@ -23,6 +23,9 @@ var STATE_ABBREVIATION= {
 }
 
 exports.handler = (event, context, callback) => {
+	var updated_date_date = new Date()
+	var updated_date = updated_date_date.toString()
+
 	var params = {
 		Name: '/brewery-app/api-key',
 		WithDecryption: true
@@ -56,17 +59,28 @@ exports.handler = (event, context, callback) => {
 
 									for (var r = 1; r < row.length; r++) {
 										var params = {
-											Item: {
-												"state_abr": {
+											ExpressionAttributeNames: {
+												"#s": "state",
+												"#ud": "updated_date"
+											}, 
+											ExpressionAttributeValues: {
+												":s": {
 													S: state_abr
-												}, 
+												},
+												":ud": {
+													S: updated_date
+												}
+											}, 
+											Key: {
 												"brewery_name": {
 													S: row[r]
 												}
 											}, 
-											TableName: process.env.DYNAMODB_TABLE
+											ReturnValues: "ALL_NEW", 
+											TableName: process.env.DYNAMODB_TABLE, 
+											UpdateExpression: "SET #s = :s, #ud = :ud"
 										};
-										dynamodb.putItem(params, function(err, data) {
+										dynamodb.updateItem(params, function(err, data) {
 											if (err) console.log(err, err.stack); // an error occurred
 											else	 console.log(data);		   // successful response
 											
