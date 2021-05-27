@@ -89,3 +89,13 @@ function getGoogleSheetsBreweries(state) {
         $("#gs_breweries").append("</ul>")
     })
 }
+
+function populateNumbers() {
+    $.ajax({
+        url: "https://breweryapi.claytondavis.dev/api/brewery/count",
+        async: false,
+        method: "GET",    })
+    .done(function( count_data ) {
+        console.log(count_data)
+    })
+}
