@@ -167,10 +167,10 @@ Resources:
         - SSMParameterReadPolicy:
             ParameterName: "/brewery-app/sheet-id"
         - Statement:
-          - Sid: SSMPutParameters
+          - Sid: SSMPutParameter
             Effect: Allow
             Action:
-              - ssm:PutParameters
+              - ssm:PutParameter
             Resource: '*'
       Environment:
         Variables:

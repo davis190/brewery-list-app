@@ -99,11 +99,11 @@ exports.handler = (event, context, callback) => {
 									Name: '/brewery-app/state-totals',
 									Value: JSON.stringify(state_total),
 									Overwrite: true,
-									Type: String
+									Type: 'String'
 								};
 								ssm.putParameter(params, function(err, data) {
-								if (err) console.log(err, err.stack); // an error occurred
-								else     console.log(data);           // successful response
+									if (err) console.log(err, err.stack); // an error occurred
+									else     console.log(data);           // successful response
 								});
 							} catch(e) {
 								console.log("ERROR")
