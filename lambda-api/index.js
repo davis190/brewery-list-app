@@ -83,7 +83,7 @@ exports.handler = (event, context, callback) => {
 			// response(null, "MADE IR", callback)
 		} else if (event['resource'] == "/brewery/count") {
 			var params = {
-				Name: '/brewery-app/sheet-id'
+				Name: '/brewery-app/state-totals'
 			};
 			ssm.getParameter(params, function(err, totals) {
 				if (err) console.log(err, err.stack); // an error occurred

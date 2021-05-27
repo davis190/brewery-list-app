@@ -9,12 +9,18 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 
-  <script src="script.js?cache=4"></script>
+  <script src="script.js?cache=12"></script>
   <script>
 	$(window).bind('hashchange', function() {
-		console.log("Populating page with new data")
-		populatePage(window.location.href.split("#")[1])
+		pageStart()
 	})
+	$(document).ready(function() { 
+		pageStart()
+	});
+	function pageStart() {
+		populateNumbers()
+		populatePage(window.location.href.split("#")[1])
+	}
   </script>
 
   <style>

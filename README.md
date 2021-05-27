@@ -1,37 +1,30 @@
-# Brewery List
+# Brewery List App
 
-This simple HTML page that reads in the list of breeries from the Brewers Associatin and then pulls in a count of breweries from the same gogole sheet that Brewery Map uses. It then display the percentage of bereries visited per state.
+This is an app that was built to display all of the breweries that I have been to and compare them with the total list from the [Brewers Association](https://www.brewersassociation.org/directories/breweries).
 
-## API Key and Sheet ID
+This app uses several cron jobs to fetch and cache the data into DynamoDB and then builds an API layer on top of that cached data.
 
-To run this as is you will need to populate your API_KEY and SHEET_ID. This project populates them in the `local_api_key.js` file
+## Brewers Association Cron
+This cron fetch data from the Brewers Association website ([json file](https://www.brewersassociation.org/wp-content/themes/ba2019/json-store/breweries/breweries.json)). It does some filtering of the data like only storing US breweries and removing breweries in the planning stage. It then stores all of that data into DynamoDB.
 
-```
-var API_KEY = "API_KEY";
-var SHEET_ID = "SHEET_ID";
-```
-
-## The Google Sheet
-
-The Google sheet is formatted as below. The first column does not matter and is ignored. The second column is used to extract the states whcih are used to pull down the list from Breweres Association. This must also have a state abbreviation in the array. Every row after that is a unique brewery found in the state that is contained at the top of the column. Blank cells are fine and are also ignored.
-
-You can adjust the columns/rows in the API call that is used to fetch the data if your sheet varries. 
+## Google Sheet Cron
+This cron will fetch the names of the breweries I have visited which i store in google sheets. It will store these names and their associate states into DynamoDN. The Google Sheet looks like the below.
 
 ![Brewery List Google Sheet](images/brewery_list_sheet.png "Brewery List Google Sheet")
 
-## Site
+This cron also requires API_KEYs and SHEET_IDs. These are stored in parameter store currently.
 
-Pretty basic site - it will list the name of the state, a progress bar with the percentage of breweries visited, and if you click on the name of the state it will list the breweries visited.
+## BA & GS Linking
+This cron job will take the data from both DynamoDB table and compare it. It does this in 2 ways.
 
-Couple additional notes about the way the page works
-- Each state has an ignore list for the brewers association data - This is used to remove duplicates
-- Each state has an ignore list for the google sheet - This is use to remove any closed breweries
-- We filte rout contract brewers and breweries in planning since they can't be visited
-- If a brewery is close it will appear red in the list - this is pull from the google sheet exception list
+1) If there is a breweryID in the GS Dynanmo table, it will copy the related data from the BA table into the GS table
+2) If there is no id found, then it will query for the name of the brewery from GS table in the BA table to try and find a match. It will use several variations of the name when searching. If it finds a match it will copy the related data.
 
-The site will look like the below.
+If any of the matches are found, it will also store a status of `match_found` in the table to keep track of which ones have matched and which ones have not.
 
-![Brewery List Website](images/brewery_list_website.png "Brewery List Website")
+## Deployment
+All deployments for this repo are done through CodeBuild
 
-## Map
-[Map README](html/map/README.md)
+## Architecture
+
+![Arch Diagram](images/Brewery_App_Diagram.png "Arch Diagram")

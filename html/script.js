@@ -31,7 +31,7 @@ function populatePage(state) {
         getBrewersAssociationBreweries(state)
         getGoogleSheetsBreweries(state)
     } else {
-
+        populateHome()
     }
 }
 
@@ -91,11 +91,43 @@ function getGoogleSheetsBreweries(state) {
 }
 
 function populateNumbers() {
+    if (!$("#nav_Wisconsin").html().includes("(")) {
+        $.ajax({
+            url: "https://breweryapi.claytondavis.dev/api/brewery/count",
+            async: false,
+            method: "GET",    })
+        .done(function( count_data ) {
+            console.log(count_data)
+            for (const key in count_data) {
+                $("#nav_"+key).append(" ("+count_data[key]+")")
+            }
+        })
+    }
+}
+
+function populateHome() {
+    $("#main").append("<h1>Brewery List</h1>")
+    $("#main").append("<p>The purpose of this site is to display all the breweries I have been to and compare that to a list of breweries from the <a href='https://www.brewersassociation.org/directories/breweries'>Brewers Association (BA)</a>. This is used to track my goal to visit a brewery in every state.</p>")
+
     $.ajax({
         url: "https://breweryapi.claytondavis.dev/api/brewery/count",
         async: false,
         method: "GET",    })
     .done(function( count_data ) {
         console.log(count_data)
+        $("#main").append("<h5>Total states so far: "+Object.keys(count_data).length+"</h5>")
+        var total_breweries = 0
+        var indv_counts = ""
+        for (const state in count_data) {
+            indv_counts = indv_counts + "<h5>"+state+" - "+count_data[state]+"</h5>"
+            total_breweries = count_data[state] + total_breweries
+            // var statusbarnum = Math.round((count_data[state] / count_data['Wisconsin']) * 100)
+            // $("#main").append('<div class="progress"> \
+            //     <div class="progress-bar progress-bar-striped" role="progressbar" style="width: '+statusbarnum+'%" aria-valuenow="'+statusbarnum+'" aria-valuemin="0" aria-valuemax="100"></div> \
+            // </div>')
+        }
+        $("#main").append("<h5>Total breweries so far: "+total_breweries+"</h5>")
+        $("#main").append("<br /><h4>Breakdown by state</h4>")
+        $("#main").append(indv_counts)
     })
 }
