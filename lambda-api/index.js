@@ -93,6 +93,25 @@ exports.handler = (event, context, callback) => {
 				}
 			})
 
+		} else if (event['resource'] == "/brewery/gs") {
+			var params = {
+				TableName: process.env.GS_DYNAMODB_TABLE
+			   };
+			   dynamodb.scan(params, function(err, data) {
+					if (err) console.log(err, err.stack); // an error occurred
+					else {
+						console.log(data);
+						var cleaned_breweries = []
+						data['Items'].forEach(function(dynamo_brewery) {
+							cleaned_breweries.push(AWS.DynamoDB.Converter.unmarshall(dynamo_brewery))
+						})
+						cleaned_breweries.sort((a, b) => (a.brewery_name > b.brewery_name) ? 1 : -1)
+						console.log("CLEANED")
+						console.log(cleaned_breweries)
+						response(null, cleaned_breweries, callback)
+					}
+			   });
+
 		}
 	}
 }

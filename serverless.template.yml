@@ -115,6 +115,12 @@ Resources:
             Path: '/brewery/gs/state/{state}/count'
             Method: get
             RestApiId: !Ref rApi
+        GsBreweryByStateCount:
+          Type: Api
+          Properties:
+            Path: '/brewery/gs'
+            Method: get
+            RestApiId: !Ref rApi
         BreweryCount:
           Type: Api
           Properties:
