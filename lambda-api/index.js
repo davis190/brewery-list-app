@@ -1,6 +1,26 @@
 var AWS			 = require('aws-sdk')
 var dynamodb = new AWS.DynamoDB();
 
+
+var STATE_ABBREVIATION= {
+    "California": "CA",
+    "Colorado": "CO",
+    "Illinois": "IL",
+    "Indiana": "IN",
+    "Iowa": "IA",
+    "Kentucky": "KY",
+    "Minnesota": "MN",
+    "Michigan": "MI",
+    "Missouri": "MO",
+    "Nebraska": "NE",
+    "Nevada": "NV",
+    "North Carolina": "NC",
+    "Ohio": "OH",
+    "Texas": "TX",
+    "Washington": "WA",
+    "Wisconsin": "WI"
+}
+
 exports.handler = (event, context, callback) => {
 	console.log(event)
 
@@ -8,6 +28,10 @@ exports.handler = (event, context, callback) => {
 		if (event['resource'] == "/brewery/ba/state/{state}" || event['resource'] == "/brewery/ba/state/{state}/count") {
 			console.log("HERE")
 			console.log(event['pathParameters']['state'])
+			var state = event['pathParameters']['state']
+			if (event['pathParameters']['state'].length != 2) {
+				state = STATE_ABBREVIATION[event['pathParameters']['state']]
+			}
 			getBreweriesFromState(event['pathParameters']['state'].toUpperCase(), process.env.BA_DYNAMODB_TABLE).then(function(breweries) {
 				console.log(breweries)
 				if (event['resource'] == "/brewery/ba/state/{state}") {
@@ -19,10 +43,10 @@ exports.handler = (event, context, callback) => {
 							})
 							response(null, newArray, callback)
 						} else {
-							response(null, cleaned_breweries, callback)
+							response(null, breweries, callback)
 						}
 					} else {
-						response(null, cleaned_breweries, callback)
+						response(null, breweries, callback)
 					}
 				} else {
 					response(null, breweries.length, callback)
@@ -32,6 +56,10 @@ exports.handler = (event, context, callback) => {
 		} else if (event['resource'] == "/brewery/gs/state/{state}" || event['resource'] == "/brewery/gs/state/{state}/count") {
 			console.log("HERE")
 			console.log(event['pathParameters']['state'])
+			var state = event['pathParameters']['state']
+			if (event['pathParameters']['state'].length != 2) {
+				state = STATE_ABBREVIATION[event['pathParameters']['state']]
+			}
 			getBreweriesFromState(event['pathParameters']['state'].toUpperCase(), process.env.GS_DYNAMODB_TABLE).then(function(breweries) {
 				console.log(breweries)
 				if (event['resource'] == "/brewery/gs/state/{state}") {
@@ -43,10 +71,10 @@ exports.handler = (event, context, callback) => {
 							})
 							response(null, newArray, callback)
 						} else {
-							response(null, cleaned_breweries, callback)
+							response(null, breweries, callback)
 						}
 					} else {
-						response(null, cleaned_breweries, callback)
+						response(null, breweries, callback)
 					}
 				} else {
 					response(null, breweries.length, callback)
@@ -81,6 +109,7 @@ function getBreweriesFromState(state_abr, dynamo_table) {
 				data['Items'].forEach(function(dynamo_brewery) {
 					cleaned_breweries.push(AWS.DynamoDB.Converter.unmarshall(dynamo_brewery))
 				})
+				cleaned_breweries.sort((a, b) => (a.brewery_name > b.brewery_name) ? 1 : -1)
 				console.log("CLEANED")
 				console.log(cleaned_breweries)
 				resolve(cleaned_breweries)

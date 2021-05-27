@@ -67,7 +67,7 @@ Resources:
   rApiBa:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: API-BrewersAssociation
+      FunctionName: API-BreweryApi
       Handler: index.handler
       # Runtime: nodejs8.10
       CodeUri: ./lambda-api/
@@ -166,6 +166,12 @@ Resources:
             ParameterName: "/brewery-app/api-key"
         - SSMParameterReadPolicy:
             ParameterName: "/brewery-app/sheet-id"
+        - Statement:
+          - Sid: SSMPutParameters
+            Effect: Allow
+            Action:
+              - ssm:PutParameters
+            Resource: '*'
       Environment:
         Variables:
           DYNAMODB_TABLE: !Ref rDynamoDbGsTable

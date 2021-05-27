@@ -53,6 +53,7 @@ exports.handler = (event, context, callback) => {
 								body = JSON.parse(Buffer.concat(body).toString());
 								console.log(body)
 								console.log(body['values'])
+								var state_total = {}
 								body['values'].forEach(function(row) {
 									var state = row[0].split("(")[0].trim();
 									var state_abr = STATE_ABBREVIATION[state]
@@ -85,8 +86,25 @@ exports.handler = (event, context, callback) => {
 											else	 console.log(data);		   // successful response
 											
 										});
+
+										if (state_total[state]) {
+											state_total[state] = state_total[state]++
+										} else {
+											state_total[state] = 1
+										}
 									}
 								})
+
+								var params = {
+									Name: '/brewery-app/state-totals',
+									Value: JSON.stringify(state_total),
+									Overwrite: true,
+									Type: String
+								};
+								ssm.putParameter(params, function(err, data) {
+								if (err) console.log(err, err.stack); // an error occurred
+								else     console.log(data);           // successful response
+								});
 							} catch(e) {
 								console.log("ERROR")
 								console.error(e);
