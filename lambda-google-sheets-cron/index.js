@@ -88,7 +88,7 @@ exports.handler = (event, context, callback) => {
 										});
 
 										if (state_total[state]) {
-											state_total[state] = state_total[state]++
+											state_total[state] = state_total[state] + 1
 										} else {
 											state_total[state] = 1
 										}

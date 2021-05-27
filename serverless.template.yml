@@ -82,6 +82,10 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName:
               !Ref rDynamoDbBaTable
+        - SSMParameterReadPolicy:
+            ParameterName: "/brewery-app/state-totals"
+        - SSMParameterReadPolicy:
+            ParameterName: "brewery-app/state-totals"
       Environment:
         Variables:
           GS_DYNAMODB_TABLE: !Ref rDynamoDbGsTable

@@ -1,6 +1,6 @@
 var AWS			 = require('aws-sdk')
 var dynamodb = new AWS.DynamoDB();
-
+var ssm = new AWS.SSM({apiVersion: '2014-11-06'});
 
 var STATE_ABBREVIATION= {
     "California": "CA",
@@ -81,6 +81,18 @@ exports.handler = (event, context, callback) => {
 				}
 			})
 			// response(null, "MADE IR", callback)
+		} else if (event['resource'] == "/brewery/count") {
+			var params = {
+				Name: '/brewery-app/sheet-id'
+			};
+			ssm.getParameter(params, function(err, totals) {
+				if (err) console.log(err, err.stack); // an error occurred
+				else {
+					console.log(totals['Parameter']['Value'])
+					response(null, JSON.parse(totals['Parameter']['Value']), callback)
+				}
+			})
+
 		}
 	}
 }
