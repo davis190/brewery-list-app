@@ -11,6 +11,7 @@ STATE_ABBREVIATION= {
     "Nebraska": "NE",
     "Nevada": "NV",
     "North Carolina": "NC",
+    "North_Carolina": "NC",
     "Ohio": "OH",
     "Texas": "TX",
     "Washington": "WA",
@@ -27,11 +28,18 @@ function populatePage(state) {
     if (state != 'home') {
         $("#main").append("<h1>"+state+"</h1>")
         $("#main").append('<div id="progressBar"></div>')
+
+        $("ul.nav li").removeClass("active")
+        $("#nav_"+state).parent().addClass("active")
         
         getBrewersAssociationBreweries(state)
         getGoogleSheetsBreweries(state)
     } else {
         populateHome()
+
+        $("ul.nav li").removeClass("active")
+        $("#nav_home").addClass("active")
+
     }
 }
 
@@ -52,7 +60,7 @@ function getBrewersAssociationBreweries(state) {
                 match_count++
             } else {
                 unmatch_count++
-                $("#ba_breweries").append("<li id=\""+breweryapi_data[i]['brewery_id']+"\">"+breweryapi_data[i]['brewery_name']+"</li>")
+                $("#ba_breweries").append("<li id=\""+breweryapi_data[i]['brewery_id']+"\">"+breweryapi_data[i]['brewery_name']+" ("+breweryapi_data[i]['city']+")</li>")
             }
         }
         $("#ba_breweries").append("</ul>")
@@ -84,7 +92,11 @@ function getGoogleSheetsBreweries(state) {
             } else if (breweryapi_data[i]['status'] == 'closed') {
                 style = " style='color:red' "
             }
-            $("#gs_breweries").append("<li"+style+">"+breweryapi_data[i]['brewery_name']+"</li>")
+            if (breweryapi_data[i]['city']) {
+                $("#gs_breweries").append("<li"+style+">"+breweryapi_data[i]['brewery_name']+" ("+breweryapi_data[i]['city']+")</li>")
+            } else {
+                $("#gs_breweries").append("<li"+style+">"+breweryapi_data[i]['brewery_name']+"</li>")
+            }
         }
         $("#gs_breweries").append("</ul>")
     })
@@ -99,7 +111,7 @@ function populateNumbers() {
         .done(function( count_data ) {
             console.log(count_data)
             for (const key in count_data) {
-                $("#nav_"+key).append(" ("+count_data[key]+")")
+                $("#nav_"+key.replace(" ","_")).append(" ("+count_data[key]+")")
             }
         })
     }

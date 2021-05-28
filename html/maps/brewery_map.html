@@ -59,21 +59,21 @@
             function getBreweries() {
                 // Fetch list of breweries from the google sheet
                 $.ajax({
-                    url: "https://breweryapi.claytondavis.dev/api/brewery/gs/state/"+STATE_ABBREVIATION[state],
+                    url: "https://breweryapi.claytondavis.dev/api/brewery/gs",
                     async: false,
                     method: "GET",    })
                 .done(function( breweryapi_data ) {
                     console.log(breweryapi_data)
                     breweryTotal = breweryapi_data.length
                     for (var i = 0; i < breweryapi_data.length; i++) {
-                        
+                        console.log("Create Markers: "+breweryapi_data[i]['brewery_name'])
                         if (breweryapi_data[i]['lat'] && breweryapi_data[i]['lon']) {
+                            console.log("-- Using lat + long")
                             // Count of the brewery we just processed (starting with 1)
                             var brewNum = i + 1
 
-                            console.log("Create Markers: "+breweryapi_data[i]['brewery_name'])
-                            const myLatLng = { lat: breweryapi_data[i]['lat'], lng: breweryapi_data[i]['lon'] };
-                            createMarkers(results, brewNum, brewery);
+                            var myLatLng = { lat: parseFloat(breweryapi_data[i]['lat']), lng: parseFloat(breweryapi_data[i]['lon']) };
+                            createMarkers(null, brewNum, breweryapi_data[i]['brewery_name'], myLatLng);
 
                             // Number/percentage for the status bar
                             var statusbarnum = Math.round((brewNum / breweryTotal) * 100)
@@ -81,57 +81,60 @@
                             $( "#progressbar" ).progressbar({value: statusbarnum});
 
                             if (brewNum == breweryTotal) {
+                                console.log("COMPLETE")
                                 $( "#progressbar" ).hide();
                             }
                         } else {
-                            var brewery = breweryapi_data[i]['brewery_name'] + " " + breweryapi_data[i]['state']
-                            var request = {
-                                query: brewery,
-                                fields: ['formatted_address', 'name', 'geometry']
-                            };
-
-                            service = new google.maps.places.PlacesService(map);
-                            service.findPlaceFromQuery(request, function callback(results, status) {
-                                // If the status returns OK - process and create a marker
-                                if (status == google.maps.places.PlacesServiceStatus.OK) {
-                                    // Count of the brewery we just processed (starting with 1)
-                                    var brewNum = i + 1
-
-                                    console.log("Create Markers: "+brewery)
-                                    createMarkers(results[0].geometry.location, brewNum, brewery);
-
-                                    // Number/percentage for the status bar
-                                    var statusbarnum = Math.round((brewNum / breweryTotal) * 100)
-                                    // console.log("status: " +statusbarnum)
-                                    $( "#progressbar" ).progressbar({value: statusbarnum});
-
-                                    if (brewNum == breweryTotal) {
-                                        $( "#progressbar" ).hide();
-                                    }
-                                } else {
-                                    // If APi call returns error
-                                    if (breweryArray.length != 0) {
-                                        console.log("--ERROR--")
-                                        console.log(brewery)
-                                        console.log(results);
-                                        console.log(status)
-                                        // If over the query limit - sleep and try again
-                                        if (status == "OVER_QUERY_LIMIT") {
-                                            console.log("sleeping to try again")
-                                            setTimeout(function(){ getPlaces(brewery, 1); }, 10000);
-                                        }
-                                    }
-                                }
-                            });
+                            console.log("-- Looking up")
+                            var brewNum = i + 1
+                            placesAPI(breweryapi_data[i]['brewery_name'], breweryapi_data[i]['state'], breweryTotal, brewNum)
                         }
                     }
                 })
             }
 
+            function placesAPI(brewery_name, state, breweryTotal, brewNum) {
+                var brewery = brewery_name + " " + state
+                var request = {
+                    query: brewery,
+                    fields: ['formatted_address', 'name', 'geometry']
+                };
+
+                service = new google.maps.places.PlacesService(map);
+                service.findPlaceFromQuery(request, function callback(results, status) {
+                    // If the status returns OK - process and create a marker
+                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                        // Count of the brewery we just processed (starting with 1)
+
+                        createMarkers(results, brewNum, brewery, null);
+
+                        // Number/percentage for the status bar
+                        var statusbarnum = Math.round((brewNum / breweryTotal) * 100)
+                        // console.log("status: " +statusbarnum)
+                        $( "#progressbar" ).progressbar({value: statusbarnum});
+
+                        if (brewNum == breweryTotal) {
+                            console.log("COMPLETE")
+                            $( "#progressbar" ).hide();
+                        }
+                    } else {
+                        // If APi call returns error
+                        console.log("--ERROR--")
+                        console.log(brewery)
+                        console.log(results);
+                        console.log(status)
+                        // If over the query limit - sleep and try again
+                        if (status == "OVER_QUERY_LIMIT") {
+                            console.log("sleeping to try again")
+                            setTimeout(function(){ placesAPI(brewery_name, state, breweryTotal, brewNum); }, 10000);
+                        }
+                    }
+                });
+            }
+
             
 
-            function createMarkers(latLong, brewNum, brewName) {
-
+            function createMarkers(places, brewNum, brewName, latLong) {
                 // Image for the marker
                 var image = {
                     // url: place.icon,
@@ -143,16 +146,28 @@
                 };
 
                 // Google maps marker
+                var pos = ""
+                if (places) {
+                    place = places[0]
+                    pos = place.geometry.location
+                } else {
+                    pos = latLong
+                }
+                
                 var marker = new google.maps.Marker({
                     map: map,
                     icon: image,
                     title: brewName,
-                    position: latLong
+                    position: pos
                 });
 
                 // List all breweries
                 var li = document.createElement('li');
-                li.textContent = brewNum + ") " + brewName + " - " + places.length;
+                if (places) {
+                    li.textContent = brewNum + ") " + brewName + " - (" + places.length + " places found)";
+                } else {
+                    li.textContent = brewNum + ") " + brewName;
+                }
                 document.getElementById('places').appendChild(li);
 
             }
@@ -163,7 +178,7 @@
         <div id="map"></div>
         Return to <a href="/">main page</a>
         <div id="places"></div>
-        <div id="progressbar"></div>
+        <!-- <div class="progress"><div id="progressBar" class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div> -->
     </body>
 
 

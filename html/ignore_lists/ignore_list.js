@@ -1,2 +1,0 @@
-var baIgnoreList = {}
-var gsIgnoreList = {}

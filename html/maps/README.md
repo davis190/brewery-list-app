@@ -2,14 +2,6 @@
 
 This simple HTML page reads in brewery names from a google sheet, looks them up using the google maps places library, and then maps them on a google map.
 
-## API Key and Sheet ID
-
-To run this as is you will need to populate your API_KEY and SHEET_ID.
-
-```
-var API_KEY = "API_KEY";
-var SHEET_ID = "SHEET_ID";
-```
 
 ## The Google Sheet
 
