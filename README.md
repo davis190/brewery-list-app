@@ -23,7 +23,7 @@ This cron job will take the data from both DynamoDB table and compare it. It doe
 If any of the matches are found, it will also store a status of `match_found` in the table to keep track of which ones have matched and which ones have not.
 
 ## Deployment
-All deployments for this repo are done through CodeBuild
+All deployments for this repo are done through CodeBuild - but CodeBuild is not auto triggered, it must be triggered manually. What idiot set that up.
 
 ## Architecture
 

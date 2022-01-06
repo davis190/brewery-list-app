@@ -13,6 +13,7 @@ STATE_ABBREVIATION= {
     "North Carolina": "NC",
     "North_Carolina": "NC",
     "Ohio": "OH",
+    "Tennessee": "TN",
     "Texas": "TX",
     "Washington": "WA",
     "Wisconsin": "WI"
