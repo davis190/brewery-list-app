@@ -1,7 +1,7 @@
-var https = require('https');
-var AWS			 = require('aws-sdk')
-var dynamodb = new AWS.DynamoDB();
-var ssm = new AWS.SSM({apiVersion: '2014-11-06'});
+var https 			= require('https');
+var AWS			 	= require('aws-sdk')
+var dynamodb 		= new AWS.DynamoDB();
+var ssm 			= new AWS.SSM({apiVersion: '2014-11-06'});
 
 var STATE_ABBREVIATION= {
     "California": "CA",
