@@ -16,6 +16,7 @@ var STATE_ABBREVIATION= {
     "Nevada": "NV",
     "North Carolina": "NC",
     "Ohio": "OH",
+	"Tennessee": "TN",
     "Texas": "TX",
     "Washington": "WA",
     "Wisconsin": "WI"
