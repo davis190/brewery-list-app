@@ -44,7 +44,7 @@ exports.handler = (event, context, callback) => {
 			ssm.getParameter(params, function(err, SHEET_ID) {
 				if (err) console.log(err, err.stack); // an error occurred
 				else {
-					var FETCH_URL = "https://sheets.googleapis.com/v4/spreadsheets/"+SHEET_ID['Parameter']['Value']+"/values/USA\!A2:Q100?key="+API_KEY['Parameter']['Value']+"&majorDimension=COLUMNS"
+					var FETCH_URL = "https://sheets.googleapis.com/v4/spreadsheets/"+SHEET_ID['Parameter']['Value']+"/values/USA\!A2:T100?key="+API_KEY['Parameter']['Value']+"&majorDimension=COLUMNS"
 					console.log(FETCH_URL)
 
 					https.get(FETCH_URL, function(res) {

@@ -46,11 +46,12 @@ exports.handler = (event, context, callback) => {
 		res.on('end', function() {
 			try {
 				body = JSON.parse(Buffer.concat(body).toString());
-				var json_body = JSON.parse(body)
-				console.log(json_body['ResultData'])
+				console.log(body)
+				var json_body = JSON.parse(JSON.stringify(body))
+				console.log(json_body)
 				// var keys = Object.keys(json_body);
 				// console.log(keys)
-				json_body['ResultData'].forEach(function(brewery) {
+				json_body.forEach(function(brewery) {
 					if (brewery['Zip'] != "" && brewery['StateProvince'] != "" && US_STATE_FILTERS.includes(brewery['StateProvince']) && brewery['Type'] != "Planning" && brewery['Type'] != "Contract") {
 						console.log("-------")
 						// console.log(brewery['Country'] + " - " + brewery['StateProvince'])
