@@ -82,7 +82,7 @@ exports.handler = (event, context, callback) => {
 				// var keys = Object.keys(json_body);
 				// console.log(keys)
 				json_body.forEach(function(brewery) {
-					if (brewery['BillingAddress']['stateCode'] != "" && US_STATE_FILTERS.includes(brewery['BillingAddress']['stateCode']) && brewery['Brewery_Type__c'] != "Brewery In Planning" && brewery['Brewery_Type__c'] != "Contract") {
+					if (brewery['BillingAddress']['postalCode'] != null && brewery['BillingAddress']['stateCode'] != null && US_STATE_FILTERS.includes(brewery['BillingAddress']['stateCode']) && brewery['Brewery_Type__c'] != "Brewery In Planning" && brewery['Brewery_Type__c'] != "Contract") {
 						console.log("-------")
 						// console.log(brewery['Country'] + " - " + brewery['BillingAddress']['stateCode'])
 						console.log(brewery)
