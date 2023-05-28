@@ -82,8 +82,8 @@ exports.handler = (event, context, callback) => {
 				// var keys = Object.keys(json_body);
 				// console.log(keys)
 				json_body.forEach(function(brewery) {
-					console.log(brewery)
-					if ('postalCode' in brewery['BillingAddress'] && brewery['BillingAddress']['postalCode'] != null && brewery['BillingAddress']['stateCode'] != null && US_STATE_FILTERS.includes(brewery['BillingAddress']['stateCode']) && brewery['Brewery_Type__c'] != "Brewery In Planning" && brewery['Brewery_Type__c'] != "Contract") {
+					// console.log(brewery)
+					if (brewery['BillingAddress'] != null && brewery['BillingAddress']['latitude'] != null && brewery['BillingAddress']['longitude'] != null && brewery['BillingAddress'].hasOwnProperty('postalCode') && brewery['BillingAddress']['postalCode'] != null && brewery['BillingAddress']['stateCode'] != null && US_STATE_FILTERS.includes(brewery['BillingAddress']['stateCode']) && brewery['Brewery_Type__c'] != "Brewery In Planning" && brewery['Brewery_Type__c'] != "Contract" && brewery['Brewery_Type__c'] != null) {
 						console.log("-------")
 						// console.log(brewery['Country'] + " - " + brewery['BillingAddress']['stateCode'])
 						console.log(brewery)
@@ -116,10 +116,10 @@ exports.handler = (event, context, callback) => {
 									S: brewery['BillingAddress']['postalCode']
 								},
 								":la": {
-									S: brewery['BillingAddress']['latitude']
+									S: brewery['BillingAddress']['latitude'].toString()
 								},
 								":lo": {
-									S: brewery['BillingAddress']['longitude']
+									S: brewery['BillingAddress']['longitude'].toString()
 								},
 								":t": {
 									S: brewery['Brewery_Type__c']
@@ -137,9 +137,12 @@ exports.handler = (event, context, callback) => {
 							TableName: process.env.DYNAMODB_TABLE, 
 							UpdateExpression: "SET #s = :s, #bn = :bn, #a = :a, #c = :c, #z = :z, #la = :la, #lo = :lo, #t = :t, #ud = :ud"
 						};
+						console.log(params)
 						dynamodb.updateItem(params, function(err, data) {
 							if (err) console.log(err, err.stack); // an error occurred
-							else	 console.log(data);		   // successful response
+							else {
+								// console.log(data);		   // successful response
+							}
 							
 						});
 					}

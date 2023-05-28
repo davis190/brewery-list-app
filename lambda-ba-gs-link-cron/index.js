@@ -2,6 +2,7 @@ var https = require('https');
 var AWS			 = require('aws-sdk')
 var dynamodb = new AWS.DynamoDB();
 
+// change
 var STATE_ABBREVIATION= {
     "Alabama": "AL",
     "Alaska": "AK",
