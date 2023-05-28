@@ -76,20 +76,20 @@ Resources:
       #   - !Ref rSharedLayerVersion
       MemorySize: 1028
       Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              !Ref rDynamoDbGsTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              !Ref rDynamoDbBaTable
+        # - DynamoDBCrudPolicy:
+        #     TableName:
+        #       !Ref rDynamoDbGsTable
+        # - DynamoDBCrudPolicy:
+        #     TableName:
+        #       !Ref rDynamoDbBaTable
         - SSMParameterReadPolicy:
             ParameterName: "/brewery-app/state-totals"
         - SSMParameterReadPolicy:
             ParameterName: "brewery-app/state-totals"
-      Environment:
-        Variables:
-          GS_DYNAMODB_TABLE: !Ref rDynamoDbGsTable
-          BA_DYNAMODB_TABLE: !Ref rDynamoDbBaTable
+      # Environment:
+      #   Variables:
+      #     GS_DYNAMODB_TABLE: !Ref rDynamoDbGsTable
+      #     BA_DYNAMODB_TABLE: !Ref rDynamoDbBaTable
       Events:
         BaBreweryByState:
           Type: Api
@@ -146,13 +146,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 6 1 * ? *)
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              !Ref rDynamoDbBaTable
-      Environment:
-        Variables:
-          DYNAMODB_TABLE: !Ref rDynamoDbBaTable
+      # Policies:
+      #   - DynamoDBCrudPolicy:
+      #       TableName:
+      #         !Ref rDynamoDbBaTable
+      # Environment:
+      #   Variables:
+      #     DYNAMODB_TABLE: !Ref rDynamoDbBaTable
 
   rCronGsDynamoPopulation:
     Type: 'AWS::Serverless::Function'
@@ -171,9 +171,9 @@ Resources:
           Properties:
             Schedule: cron(0 7 1 * ? *)
       Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              !Ref rDynamoDbGsTable
+        # - DynamoDBCrudPolicy:
+        #     TableName:
+        #       !Ref rDynamoDbGsTable
         - SSMParameterReadPolicy:
             ParameterName: "brewery-app/api-key"
         - SSMParameterReadPolicy:
@@ -188,9 +188,9 @@ Resources:
             Action:
               - ssm:PutParameter
             Resource: '*'
-      Environment:
-        Variables:
-          DYNAMODB_TABLE: !Ref rDynamoDbGsTable
+      # Environment:
+      #   Variables:
+      #     DYNAMODB_TABLE: !Ref rDynamoDbGsTable
 
   rCronGsBaLink:
     Type: 'AWS::Serverless::Function'
@@ -208,91 +208,91 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 8 1 * ? *)
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              !Ref rDynamoDbGsTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              !Ref rDynamoDbBaTable
-      Environment:
-        Variables:
-          GS_DYNAMODB_TABLE: !Ref rDynamoDbGsTable
-          BA_DYNAMODB_TABLE: !Ref rDynamoDbBaTable
+      # Policies:
+      #   - DynamoDBCrudPolicy:
+      #       TableName:
+      #         !Ref rDynamoDbGsTable
+      #   - DynamoDBCrudPolicy:
+      #       TableName:
+      #         !Ref rDynamoDbBaTable
+      # Environment:
+      #   Variables:
+      #     GS_DYNAMODB_TABLE: !Ref rDynamoDbGsTable
+      #     BA_DYNAMODB_TABLE: !Ref rDynamoDbBaTable
 
   #################
   ## DynamoDB
   #################
-  rDynamoDbBaTable:
-    Type: AWS::DynamoDB::Table
-    Properties: 
-      TableName: BrewersAssociation
-      AttributeDefinitions: 
-        - AttributeName: brewery_id
-          AttributeType: S
-        - AttributeName: state
-          AttributeType: S
-        - AttributeName: brewery_name
-          AttributeType: S
-      GlobalSecondaryIndexes:
-        - IndexName: state-index
-          KeySchema:
-            - AttributeName: state
-              KeyType: HASH
-          Projection: 
-            # NonKeyAttributes: 
-            #   - name
-            ProjectionType: "ALL"
-        - IndexName: brewery-name-index
-          KeySchema:
-            - AttributeName: brewery_name
-              KeyType: HASH
-          Projection: 
-            # NonKeyAttributes: 
-            #   - name
-            ProjectionType: "ALL"
-        - IndexName: brewery-id-index
-          KeySchema:
-            - AttributeName: brewery_id
-              KeyType: HASH
-          Projection: 
-            # NonKeyAttributes: 
-            #   - name
-            ProjectionType: "ALL"
-      KeySchema: 
-        - AttributeName: brewery_id
-          KeyType: HASH
-      BillingMode: PAY_PER_REQUEST
+  # rDynamoDbBaTable:
+  #   Type: AWS::DynamoDB::Table
+  #   Properties: 
+  #     TableName: BrewersAssociation
+  #     AttributeDefinitions: 
+  #       - AttributeName: brewery_id
+  #         AttributeType: S
+  #       - AttributeName: state
+  #         AttributeType: S
+  #       - AttributeName: brewery_name
+  #         AttributeType: S
+  #     GlobalSecondaryIndexes:
+  #       - IndexName: state-index
+  #         KeySchema:
+  #           - AttributeName: state
+  #             KeyType: HASH
+  #         Projection: 
+  #           # NonKeyAttributes: 
+  #           #   - name
+  #           ProjectionType: "ALL"
+  #       - IndexName: brewery-name-index
+  #         KeySchema:
+  #           - AttributeName: brewery_name
+  #             KeyType: HASH
+  #         Projection: 
+  #           # NonKeyAttributes: 
+  #           #   - name
+  #           ProjectionType: "ALL"
+  #       - IndexName: brewery-id-index
+  #         KeySchema:
+  #           - AttributeName: brewery_id
+  #             KeyType: HASH
+  #         Projection: 
+  #           # NonKeyAttributes: 
+  #           #   - name
+  #           ProjectionType: "ALL"
+  #     KeySchema: 
+  #       - AttributeName: brewery_id
+  #         KeyType: HASH
+  #     BillingMode: PAY_PER_REQUEST
 
-  rDynamoDbGsTable:
-    Type: AWS::DynamoDB::Table
-    Properties: 
-      TableName: GoogleSheetsBreweries
-      AttributeDefinitions: 
-        - AttributeName: brewery_name
-          AttributeType: S
-        - AttributeName: state
-          AttributeType: S
-        - AttributeName: brewery_id
-          AttributeType: S
-      GlobalSecondaryIndexes:
-        - IndexName: state-index
-          KeySchema:
-            - AttributeName: state
-              KeyType: HASH
-          Projection: 
-            # NonKeyAttributes: 
-            #   - name
-            ProjectionType: "ALL"
-        - IndexName: brewery-id-index
-          KeySchema:
-            - AttributeName: brewery_id
-              KeyType: HASH
-          Projection: 
-            # NonKeyAttributes: 
-            #   - name
-            ProjectionType: "ALL"
-      KeySchema: 
-        - AttributeName: brewery_name
-          KeyType: HASH
-      BillingMode: PAY_PER_REQUEST
+  # rDynamoDbGsTable:
+  #   Type: AWS::DynamoDB::Table
+  #   Properties: 
+  #     TableName: GoogleSheetsBreweries
+  #     AttributeDefinitions: 
+  #       - AttributeName: brewery_name
+  #         AttributeType: S
+  #       - AttributeName: state
+  #         AttributeType: S
+  #       - AttributeName: brewery_id
+  #         AttributeType: S
+  #     GlobalSecondaryIndexes:
+  #       - IndexName: state-index
+  #         KeySchema:
+  #           - AttributeName: state
+  #             KeyType: HASH
+  #         Projection: 
+  #           # NonKeyAttributes: 
+  #           #   - name
+  #           ProjectionType: "ALL"
+  #       - IndexName: brewery-id-index
+  #         KeySchema:
+  #           - AttributeName: brewery_id
+  #             KeyType: HASH
+  #         Projection: 
+  #           # NonKeyAttributes: 
+  #           #   - name
+  #           ProjectionType: "ALL"
+  #     KeySchema: 
+  #       - AttributeName: brewery_name
+  #         KeyType: HASH
+  #     BillingMode: PAY_PER_REQUEST
