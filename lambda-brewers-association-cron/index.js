@@ -82,9 +82,9 @@ exports.handler = (event, context, callback) => {
 				// var keys = Object.keys(json_body);
 				// console.log(keys)
 				json_body.forEach(function(brewery) {
-					if (brewery['Zip'] != "" && brewery['StateProvince'] != "" && US_STATE_FILTERS.includes(brewery['StateProvince']) && brewery['Type'] != "Planning" && brewery['Type'] != "Contract") {
+					if (brewery['BillingAddress']['stateCode'] != "" && US_STATE_FILTERS.includes(brewery['BillingAddress']['stateCode']) && brewery['Brewery_Type__c'] != "Brewery In Planning" && brewery['Brewery_Type__c'] != "Contract") {
 						console.log("-------")
-						// console.log(brewery['Country'] + " - " + brewery['StateProvince'])
+						// console.log(brewery['Country'] + " - " + brewery['BillingAddress']['stateCode'])
 						console.log(brewery)
 						var params = {
 							ExpressionAttributeNames: {
@@ -100,28 +100,28 @@ exports.handler = (event, context, callback) => {
 							}, 
 							ExpressionAttributeValues: {
 								":s": {
-									S: brewery['StateProvince']
+									S: brewery['BillingAddress']['stateCode']
 								}, 
 								":bn": {
-									S: brewery['InstituteName']
+									S: brewery['Name']
 								},
 								":a": {
-									S: brewery['Address1']
+									S: brewery['BillingAddress']['street']
 								},
 								":c": {
-									S: brewery['City']
+									S: brewery['BillingAddress']['city']
 								},
 								":z": {
-									S: brewery['Zip']
+									S: brewery['BillingAddress']['postalCode']
 								},
 								":la": {
-									S: brewery['Latitude']
+									S: brewery['BillingAddress']['latitude']
 								},
 								":lo": {
-									S: brewery['Longitude']
+									S: brewery['BillingAddress']['longitude']
 								},
 								":t": {
-									S: brewery['BreweryType']
+									S: brewery['Brewery_Type__c']
 								},
 								":ud": {
 									S: updated_date
@@ -129,7 +129,7 @@ exports.handler = (event, context, callback) => {
 							}, 
 							Key: {
 								"brewery_id": {
-									S: brewery['BreweryDBID']
+									S: brewery['Id']
 								}
 							}, 
 							ReturnValues: "ALL_NEW", 
