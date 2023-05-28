@@ -83,7 +83,7 @@ exports.handler = (event, context, callback) => {
 				// console.log(keys)
 				json_body.forEach(function(brewery) {
 					// console.log(brewery)
-					if (brewery['BillingAddress'] != null && brewery['BillingAddress']['latitude'] != null && brewery['BillingAddress']['longitude'] != null && brewery['BillingAddress'].hasOwnProperty('postalCode') && brewery['BillingAddress']['postalCode'] != null && brewery['BillingAddress']['stateCode'] != null && US_STATE_FILTERS.includes(brewery['BillingAddress']['stateCode']) && brewery['Brewery_Type__c'] != "Brewery In Planning" && brewery['Brewery_Type__c'] != "Contract" && brewery['Brewery_Type__c'] != null) {
+					if (brewery['BillingAddress'] != null && brewery['Name'] != null && brewery['BillingAddress']['city'] != null && brewery['BillingAddress']['street'] != null && brewery['BillingAddress']['latitude'] != null && brewery['BillingAddress']['longitude'] != null && brewery['BillingAddress'].hasOwnProperty('postalCode') && brewery['BillingAddress']['postalCode'] != null && brewery['BillingAddress']['stateCode'] != null && US_STATE_FILTERS.includes(brewery['BillingAddress']['stateCode']) && brewery['Brewery_Type__c'] != "Brewery In Planning" && brewery['Brewery_Type__c'] != "Contract" && brewery['Brewery_Type__c'] != null) {
 						console.log("-------")
 						// console.log(brewery['Country'] + " - " + brewery['BillingAddress']['stateCode'])
 						console.log(brewery)
