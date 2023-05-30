@@ -178,13 +178,19 @@ function getBreweriesFromState(state_abr, dynamo_table, ashley_api) {
 		};
 		if (ashley_api) {
 			params['FilterExpression'] = "#ab = :ab"
+			
+			// Also includes the ExpressionAttributeValues and ExpressionAttributeNames from above
 			params['ExpressionAttributeNames'] = {
-				"#s": "ashley_been"
+				"#s": "ashley_been",
+				"#state" : "state"
 			}
 			params['ExpressionAttributeValues'] = {
 				":ab": {
 					S: "true"
-					}
+				},
+				":state": {
+					S: state_abr
+				}
 			}
 		}
 
