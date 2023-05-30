@@ -60,6 +60,7 @@ Resources:
         #   Prefix: workerscan
         Aliases:
           - brewery.claytondavis.dev
+          - ashley.brewery.claytondavis.dev
         DefaultCacheBehavior:
           AllowedMethods:
             - DELETE

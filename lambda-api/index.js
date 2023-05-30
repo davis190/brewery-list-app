@@ -60,7 +60,10 @@ var STATE_ABBREVIATION= {
 
 exports.handler = (event, context, callback) => {
 	console.log(event)
-
+	var ashley_api = false
+	if (event['headers']['origin'].contains("ashley")) {
+		ashley_api = true
+	}
 	if (event['httpMethod'] == "GET") {
 		if (event['resource'] == "/brewery/ba/state/{state}" || event['resource'] == "/brewery/ba/state/{state}/count") {
 			console.log("HERE")
@@ -69,7 +72,7 @@ exports.handler = (event, context, callback) => {
 			if (event['pathParameters']['state'].length != 2) {
 				state = STATE_ABBREVIATION[event['pathParameters']['state']]
 			}
-			getBreweriesFromState(event['pathParameters']['state'].toUpperCase(), process.env.BA_DYNAMODB_TABLE).then(function(breweries) {
+			getBreweriesFromState(event['pathParameters']['state'].toUpperCase(), process.env.BA_DYNAMODB_TABLE, ashley_api).then(function(breweries) {
 				console.log(breweries)
 				if (event['resource'] == "/brewery/ba/state/{state}") {
 					if (typeof event['queryStringParameters'] !== 'undefined' && event['queryStringParameters'] != null) {
@@ -97,7 +100,7 @@ exports.handler = (event, context, callback) => {
 			if (event['pathParameters']['state'].length != 2) {
 				state = STATE_ABBREVIATION[event['pathParameters']['state']]
 			}
-			getBreweriesFromState(event['pathParameters']['state'].toUpperCase(), process.env.GS_DYNAMODB_TABLE).then(function(breweries) {
+			getBreweriesFromState(event['pathParameters']['state'].toUpperCase(), process.env.GS_DYNAMODB_TABLE, ashley_api).then(function(breweries) {
 				console.log(breweries)
 				if (event['resource'] == "/brewery/gs/state/{state}") {
 					if (typeof event['queryStringParameters'] !== 'undefined' && event['queryStringParameters'] != null) {
@@ -122,6 +125,11 @@ exports.handler = (event, context, callback) => {
 			var params = {
 				Name: '/brewery-app/state-totals'
 			};
+			if (ashley_api) {
+				var params = {
+					Name: '/brewery-app/ashley-been-state-totals'
+				};
+			} 
 			ssm.getParameter(params, function(err, totals) {
 				if (err) console.log(err, err.stack); // an error occurred
 				else {
@@ -153,7 +161,7 @@ exports.handler = (event, context, callback) => {
 	}
 }
 
-function getBreweriesFromState(state_abr, dynamo_table) {
+function getBreweriesFromState(state_abr, dynamo_table, ashley_api) {
 	return new Promise ( ( resolve, reject ) => {
 		var params = {
 			ExpressionAttributeValues: {
@@ -168,6 +176,18 @@ function getBreweriesFromState(state_abr, dynamo_table) {
 			IndexName: "state-index",
 			TableName: dynamo_table
 		};
+		if (ashley_api) {
+			params['FilterExpression'] = "#ab = :ab"
+			params['ExpressionAttributeNames'] = {
+				"#s": "ashley_been"
+			}
+			params['ExpressionAttributeValues'] = {
+				":ab": {
+					S: "true"
+					}
+			}
+		}
+
 		dynamodb.query(params, function(err, data) {
 			if (err) {
 				console.log(err, err.stack);

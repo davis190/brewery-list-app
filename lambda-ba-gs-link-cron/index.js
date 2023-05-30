@@ -210,9 +210,15 @@ exports.handler = (event, context, callback) => {
 					if (visited_brewery['brewery_name'].includes("Company")) {
 						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Company", "Co"))
 						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Company", "Co."))
+						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Company", "").trim())
 					} else if (visited_brewery['brewery_name'].includes("Co")) {
 						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Co", "Company"))
 						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Co", "Co."))
+						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Co", "").trim())
+					} else if (visited_brewery['brewery_name'].includes("Brewing")) {
+						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Brewing", "Brewery"))
+					} else if (visited_brewery['brewery_name'].includes("Brewery")) {
+						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Brewery", "Brewing"))
 					} 
 					console.log("## SEARCHING BY NAME")
 					console.log(names_to_try)
