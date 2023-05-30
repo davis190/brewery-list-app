@@ -69,7 +69,7 @@ function populatePage(state) {
         $("ul.nav li").removeClass("active")
         $("#nav_"+state.replace(" ","_")).parent().addClass("active")
         
-        if (!window.location.href.contains("ashley")) {
+        if (!window.location.href.includes("ashley")) {
             getBrewersAssociationBreweries(state)
         }
         getGoogleSheetsBreweries(state)
