@@ -67,7 +67,7 @@ function populatePage(state) {
         $("#main").append('<div id="progressBar"></div>')
 
         $("ul.nav li").removeClass("active")
-        $("#nav_"+state).parent().addClass("active")
+        $("#nav_"+state.replace(" ","_")).parent().addClass("active")
         
         getBrewersAssociationBreweries(state)
         getGoogleSheetsBreweries(state)
