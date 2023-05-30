@@ -153,8 +153,9 @@ exports.handler = (event, context, callback) => {
 							};
 							dynamodb.updateItem(params, function(err, data) {
 								if (err) console.log(err, err.stack); // an error occurred
-								else	 console.log(data);		   // successful response
-								
+								else {
+									// console.log(data);		   // successful response
+								}
 							});
 
 							// Update BA DynamoDB
@@ -183,13 +184,16 @@ exports.handler = (event, context, callback) => {
 							console.log(params)
 							dynamodb.updateItem(params, function(err, data) {
 								if (err) console.log(err, err.stack); // an error occurred
-								else	 console.log(data);		   // successful response
+								else {
+									// console.log(data);		   // successful response
+								}
 								
 							});
 						}
 					});
 				} else {
 					var names_to_try = [
+						visited_brewery['brewery_name'].trim(),
 						visited_brewery['brewery_name'],
 						visited_brewery['brewery_name']+" LLC",
 						visited_brewery['brewery_name']+", LLC",
@@ -201,8 +205,8 @@ exports.handler = (event, context, callback) => {
 						names_to_try.push(visited_brewery['brewery_name'].replace("Co", "Company"))
 						names_to_try.push(visited_brewery['brewery_name'].replace("Co", "Co."))
 					} 
-					// console.log("Names to try:")
-					// console.log(names_to_try)
+					console.log("## SEARCHING BY NAME")
+					console.log(names_to_try)
 					names_to_try.forEach(function(brewery_name_to_try) {
 						// console.log("Trying: "+brewery_name_to_try)
 						var params = {
@@ -283,8 +287,9 @@ exports.handler = (event, context, callback) => {
 									};
 									dynamodb.updateItem(params, function(err, data) {
 										if (err) console.log(err, err.stack); // an error occurred
-										else	 console.log(data);		   // successful response
-										
+										else {
+											// console.log(data);		   // successful response
+										}
 									});
 
 									// Update BA DynamoDB
@@ -313,8 +318,9 @@ exports.handler = (event, context, callback) => {
 									console.log(params)
 									dynamodb.updateItem(params, function(err, data) {
 										if (err) console.log(err, err.stack); // an error occurred
-										else	 console.log(data);		   // successful response
-										
+										else {
+											// console.log(data);		   // successful response
+										}
 									});
 								}
 								
