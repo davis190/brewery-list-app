@@ -246,7 +246,8 @@ exports.handler = (event, context, callback) => {
 											"#lo": "lon",
 											"#t": "type",
 											"#ud": "updated_date",
-											"#status": "status"
+											"#status": "status",
+											"#ban": "ba_name"
 										}, 
 										ExpressionAttributeValues: {
 											":s": {
@@ -275,6 +276,9 @@ exports.handler = (event, context, callback) => {
 											},
 											":status": {
 												S: "match_found"
+											},
+											":ban": {
+												S: cleaned_ba_brewery_search[0]['brewery_name']
 											}
 										}, 
 										Key: {
@@ -284,7 +288,7 @@ exports.handler = (event, context, callback) => {
 										}, 
 										ReturnValues: "ALL_NEW", 
 										TableName: process.env.GS_DYNAMODB_TABLE, 
-										UpdateExpression: "SET #s = :s, #a = :a, #c = :c, #z = :z, #la = :la, #lo = :lo, #t = :t, #ud = :ud, #status = :status"
+										UpdateExpression: "SET #s = :s, #a = :a, #c = :c, #z = :z, #la = :la, #lo = :lo, #t = :t, #ud = :ud, #status = :status, #ban = :ban"
 									};
 									dynamodb.updateItem(params, function(err, data) {
 										if (err) console.log(err, err.stack); // an error occurred
