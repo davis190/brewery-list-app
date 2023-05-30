@@ -60,7 +60,16 @@ exports.handler = (event, context, callback) => {
 	var updated_date_date = new Date()
 	var updated_date = updated_date_date.toString()
 	var params = {
-		TableName: process.env.GS_DYNAMODB_TABLE
+		TableName: process.env.GS_DYNAMODB_TABLE,
+		ExpressionAttributeNames: {
+			"#s": "status"
+		}, 
+		ExpressionAttributeValues: {
+			":sc": {
+				S: "closed"
+				}
+		}, 
+		FilterExpression: "#s <> :sc"
 	};
 	dynamodb.scan(params, function(err, gs_brewery_data) {
 		if (err) console.log(err, err.stack); // an error occurred
@@ -195,15 +204,15 @@ exports.handler = (event, context, callback) => {
 					var names_to_try = [
 						visited_brewery['brewery_name'].trim(),
 						visited_brewery['brewery_name'],
-						visited_brewery['brewery_name']+" LLC",
-						visited_brewery['brewery_name']+", LLC",
+						visited_brewery['brewery_name'].trim()+" LLC",
+						visited_brewery['brewery_name'].trim()+", LLC",
 					]
 					if (visited_brewery['brewery_name'].includes("Company")) {
-						names_to_try.push(visited_brewery['brewery_name'].replace("Company", "Co"))
-						names_to_try.push(visited_brewery['brewery_name'].replace("Company", "Co."))
+						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Company", "Co"))
+						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Company", "Co."))
 					} else if (visited_brewery['brewery_name'].includes("Co")) {
-						names_to_try.push(visited_brewery['brewery_name'].replace("Co", "Company"))
-						names_to_try.push(visited_brewery['brewery_name'].replace("Co", "Co."))
+						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Co", "Company"))
+						names_to_try.push(visited_brewery['brewery_name'].trim().replace("Co", "Co."))
 					} 
 					console.log("## SEARCHING BY NAME")
 					console.log(names_to_try)
