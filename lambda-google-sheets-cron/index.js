@@ -131,10 +131,10 @@ exports.handler = (event, context, callback) => {
 												for (var r = 1; r < row.length; r++) {
 													var brewery_name = row[r].trim()
 													var ashley_been = "true"
-													if (brewery_name in ASHELY_NOT_BEEN_TO_ARR) {
+													if (ASHELY_NOT_BEEN_TO_ARR.includes(brewery_name)) {
 														ashley_been = "false"
 													}
-													
+
 													var params = {
 														ExpressionAttributeNames: {
 															"#s": "state",

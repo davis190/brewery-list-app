@@ -181,7 +181,7 @@ function getBreweriesFromState(state_abr, dynamo_table, ashley_api) {
 			
 			// Also includes the ExpressionAttributeValues and ExpressionAttributeNames from above
 			params['ExpressionAttributeNames'] = {
-				"#s": "ashley_been",
+				"#ab": "ashley_been",
 				"#state" : "state"
 			}
 			params['ExpressionAttributeValues'] = {
