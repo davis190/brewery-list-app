@@ -68,7 +68,7 @@ exports.handler = (event, context, callback) => {
 	https.get(FETCH_URL, function(res) {
 		// console.log(res)
 		console.log("Got response: " + res.statusCode);
-		// context.succeed();
+
 		var body = [];
 		res.on('data', function(chunk) {
 			body.push(chunk);
