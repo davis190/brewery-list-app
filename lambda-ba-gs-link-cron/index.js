@@ -227,7 +227,8 @@ exports.handler = (event, context, callback) => {
 								console.log(err, err.stack);
 							} else {
 								if (ba_brewery_search['Items'].length != 0) {
-									// console.log(ba_brewery_search);
+									console.log("## MATCH FOUND")
+									console.log(ba_brewery_search);
 									var cleaned_ba_brewery_search = []
 									ba_brewery_search['Items'].forEach(function(dynamo_ba_brewery_search) {
 										cleaned_ba_brewery_search.push(AWS.DynamoDB.Converter.unmarshall(dynamo_ba_brewery_search))
