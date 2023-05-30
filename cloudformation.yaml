@@ -54,10 +54,6 @@ Resources:
             ResponsePagePath: "/app/index.html"
         Comment: Cloudfront distribution for brewery app and map
         DefaultRootObject: index.html
-        # Logging:
-        #   IncludeCookies: 'false'
-        #   Bucket: workerscan-cloudfront-logging-bucket.s3.amazonaws.com
-        #   Prefix: workerscan
         Aliases:
           - brewery.claytondavis.dev
           - ashley-brewery.claytondavis.dev

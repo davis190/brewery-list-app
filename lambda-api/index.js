@@ -61,7 +61,7 @@ var STATE_ABBREVIATION= {
 exports.handler = (event, context, callback) => {
 	console.log(event)
 	var ashley_api = false
-	if (event['headers']['origin'].contains("ashley")) {
+	if (event['headers']['origin'].includes("ashley")) {
 		ashley_api = true
 	}
 	if (event['httpMethod'] == "GET") {
@@ -217,9 +217,7 @@ function response(err, res, callback) {
         body: err ? JSON.stringify(err) : JSON.stringify(res),
         headers: {
             'Content-Type': 'application/json',
-            // 'Access-Control-Allow-Origin': 'https://app.workerscan.com',
             'Access-Control-Allow-Origin': '*',
-            // 'Access-Control-Allow-Headers': 'Authorization',
             'Access-Control-Allow-Headers': '*',
             'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
         }

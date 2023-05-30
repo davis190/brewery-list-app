@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
-Description: WorkerScan APIs.
+Description: Brewery Site APIs.
 Parameters: 
     WebUrl: 
       Type: String
@@ -45,24 +45,9 @@ Resources:
     Properties:
       RestApiId: !Ref rApi
       DomainName: !Ref rDomainName
-      # BasePath: api
-      ## TODO: Should eventually use this so that only one stage is exposed via the domain
-      # Stage: prod
-  ## Lmabda Layer
-  # rSharedLayerVersion:
-  #   Type: AWS::Serverless::LayerVersion
-  #   Properties:
-  #       LayerName: shared-functions
-  #       Description: Dependencies for WorkerScanAPI
-  #       ContentUri: code/shared/
-  #       CompatibleRuntimes:
-  #         # - nodejs6.10
-  #         # - nodejs8.10
-  #         - nodejs12.x
-  #       LicenseInfo: 'MIT'
-  #       # RetentionPolicy: Retain
+
   ###################
-  ## Worker APIs
+  ## Brewery APIs
   ###################
   rApiBa:
     Type: 'AWS::Serverless::Function'
@@ -71,7 +56,7 @@ Resources:
       Handler: index.handler
       # Runtime: nodejs8.10
       CodeUri: ./lambda-api/
-      Description: Function for worker brewery options.
+      Description: Function for brewery apis.
       # Layers:
       #   - !Ref rSharedLayerVersion
       MemorySize: 1028
@@ -86,6 +71,10 @@ Resources:
             ParameterName: "/brewery-app/state-totals"
         - SSMParameterReadPolicy:
             ParameterName: "brewery-app/state-totals"
+        - SSMParameterReadPolicy:
+            ParameterName: "/brewery-app/ashley-been-state-totals"
+        - SSMParameterReadPolicy:
+            ParameterName: "brewery-app/ashley-been-state-totals"
       Environment:
         Variables:
           GS_DYNAMODB_TABLE: !Ref rDynamoDbGsTable
